@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="587.0" prefWidth="643.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane fx:id="appBar" layoutX="-2.0" maxHeight="50.0" prefHeight="50.0" prefWidth="600.0" style="-fx-background-color: #FFFFFF;" styleClass="app_bar" stylesheets="@../styles/css/app-bar.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label id="contextLabel" layoutX="14.0" layoutY="7.0" prefHeight="39.0" prefWidth="160.0" stylesheets="@../styles/css/app-bar.css" text="AppBar">
+               <padding>
+                  <Insets bottom="2.0" left="2.0" top="2.0" />
+               </padding>
+            </Label>
+            <JFXButton fx:id="settingsButton" buttonType="RAISED" layoutX="594.0" layoutY="10.0" maxWidth="25.0" minWidth="25.0" prefHeight="34.0" prefWidth="25.0" styleClass="settings_button" stylesheets="@../styles/css/app-bar.css">
+               <padding>
+                  <Insets bottom="2.0" right="5.0" top="2.0" />
+               </padding>
+            </JFXButton>
+            <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="597.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../mipmap/settings_black_18dp.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <AnchorPane fx:id="contextViewer" layoutX="7.0" layoutY="50.0" prefHeight="532.0" prefWidth="230.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="50.0" />
+      <AnchorPane fx:id="mainActivity" layoutX="237.0" layoutY="50.0" prefHeight="532.0" prefWidth="403.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="50.0" />
+      <FlowPane prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</AnchorPane>

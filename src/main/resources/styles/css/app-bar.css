@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+.app_bar{
+    /* Add shadows to create the "card" effect */
+    -fx-transition: 0.3s;
+}
+
+.label {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-weight: bold;
+    -fx-font-size:large
+}
+
+.settings_button{
+    -fx-background-color: white;
+    -fx-color:black;
+    -fx-border-radius: 16px 16px 16px 16px;
+    
+}

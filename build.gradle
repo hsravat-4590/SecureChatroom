@@ -11,6 +11,9 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 repositories {
     mavenCentral()
+    maven {
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/releases'
+    }
 }
 
 jar{
@@ -21,9 +24,10 @@ jar{
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'com.jfoenix:jfoenix:9.0.10'
+    compile 'org.javafxports:jfxmobile-plugin:1.0.8'
 }
 
 javafx {
     version = "15.0.1"
-    modules = [ 'javafx.controls','javafx.fxml' ]
+    modules = [ 'javafx.controls','javafx.fxml', 'javafx.web']
 }

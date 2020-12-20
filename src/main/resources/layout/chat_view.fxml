@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.web.WebView?>
+
+
+<AnchorPane prefHeight="532.0" prefWidth="403.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <WebView fx:id="chatWebView" layoutX="2.0" layoutY="7.0" prefHeight="425.0" prefWidth="403.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="5.0" />
+      <JFXTextArea fx:id="chatField" layoutX="14.0" layoutY="522.0" prefHeight="89.0" prefWidth="303.0" promptText="ChatField..." styleClass="text_area" stylesheets="@../styles/css/webview.css" wrapText="true" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="100.0" />
+      <JFXButton fx:id="chatSend" buttonType="RAISED" layoutX="323.0" layoutY="466.0" onAction="#sendClicked" prefHeight="32.0" prefWidth="66.0" styleClass="send_button" stylesheets="@../styles/css/webview.css" text="Send" AnchorPane.bottomAnchor="34.0" AnchorPane.rightAnchor="15.0" />
+   </children>
+</AnchorPane>

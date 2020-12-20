@@ -21,6 +21,7 @@ public final class GlobalContext implements Serializable {
     private int currentPort;
     private Map<String,ChatContext> chatContextMap;
     private volatile boolean isRunning;
+    private volatile ChatContext currentChat;
 
     private GlobalContext(){
         mUserName = DEFAULT_USERNAME;
@@ -100,6 +101,18 @@ public final class GlobalContext implements Serializable {
     public Map<String,ChatContext> getContexts(){return chatContextMap;}
     public int getNextAvailablePort(){
         return currentPort++;
+    }
+
+    /**
+     * Sets the Current Chat Context in view
+     * @param context The Chat Context in View
+     */
+    public void setCurrentContext(ChatContext context){
+        currentChat = context;
+    }
+
+    public ChatContext getCurrentChat() {
+        return currentChat;
     }
 
     public boolean getStatus(){return isRunning;}

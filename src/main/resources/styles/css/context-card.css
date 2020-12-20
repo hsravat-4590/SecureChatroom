@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+/* Context Cards are JFX Buttons */
+.card_view{
+    /* Add shadows to create the "card" effect */
+    -fx-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    -fx-transition: 0.3s;
+    -fx-font-family: 'Roboto', sans-serif;
+}
+
+.button_style{
+    -fx-background-color: white;
+    -fx-color: black;
+    -fx-font-family: 'Roboto', sans-serif;
+}
+
+.chat_label{
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-weight: bold;
+    -fx-font-size: medium;
+}
+.date_time_label{
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-weight: 300;
+    -fx-font-size: small;
+}
+
+.last_chat_label{
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-weight: 500;
+    -fx-font-size: small;
+}

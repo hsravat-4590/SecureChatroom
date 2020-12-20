@@ -1,9 +1,10 @@
 package com.ravat.hanzalah.securechat.common.packets;
 
+import com.ravat.hanzalah.securechat.client.context.GlobalContext;
 import jdk.nashorn.internal.runtime.Context;
 
+import javax.xml.crypto.Data;
 import java.io.*;
-import java.time;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -20,15 +21,15 @@ public interface DataPacket{
         /**
          * The user that authored the message
          */
-        private final String author;
+        public final String author;
         /**
          * The Time of the message in UTC Format. The messages are converted into local time when parsed by the reciever
          */
-        private final ZonedDateTime time;
+        public final ZonedDateTime time;
         /**
          * The Canonical Name of the class
          */
-        private final String payloadINF;
+        public final String payloadINF;
 
         /**
          * Constructs the payload metadata
@@ -36,7 +37,7 @@ public interface DataPacket{
          */
         public MetaData(DataPayload payload) {
             time = ZonedDateTime.now(ZoneId.of("UTC"));
-            author = "Will-Get-From-GlobalContext";
+            author = GlobalContext.getInstance().mUserName;
             payloadINF = payload.getClass().getCanonicalName();
         }
     }
@@ -49,6 +50,10 @@ public interface DataPacket{
         public Payload(MetaData metaData,DataPayload dataPayload){
             this.metaData = metaData;
             this.payload = dataPayload;
+        }
+        public Payload(DataPayload payload){
+            this.metaData = new MetaData(payload);
+            this.payload = payload;
         }
     }
 
@@ -77,15 +82,15 @@ public interface DataPacket{
      * @param data The expected DataPacket in Byte array format
      * @return A datapacket type which holds the information. You are able to obtain packet metadata using this return but will need to cast to an object to make use of specific functionality
      * @throws IOException This method will throw an IOException if it is unable to parse the byte array
-     * @throws ClassNotFoundException A ClassNotFound Exception is thrown when the class obtained is not an instance of DataPacket
+     * @throws ClassNotFoundException A ClassNotFound Exception is thrown when the class obtained is not an instance of Payload
      */
     static Payload deserializeObject(byte[] data) throws IOException, ClassNotFoundException {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream is = new ObjectInputStream(in);
-        if(is.readObject() instanceof DataPacket) {
-            return (DataPacket)is.readObject();
-        } else{
-            throw new InvalidObjectException("Error: Expected a DataPacket");
+        if(is.readObject() instanceof Payload) {
+            return (Payload)is.readObject();
+        } else {
+            throw new InvalidObjectException("Error: Expected a Payload Type");
         }
     }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="435.0" prefHeight="47.0" prefWidth="231.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <JFXButton fx:id="chatButton" buttonType="RAISED" onAction="#onChatClicked" prefHeight="61.0" prefWidth="231.0" styleClass="button_style" stylesheets="@../styles/css/context-card.css" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <Label fx:id="chatTitle" layoutX="14.0" layoutY="14.0" prefHeight="30.0" prefWidth="176.0" styleClass="chat_label" stylesheets="@../styles/css/context-card.css" text="Hanzalah" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="5.0" />
+      <Label fx:id="chatDT" layoutX="181.0" layoutY="6.0" prefHeight="30.0" prefWidth="34.0" styleClass="date_time_label" stylesheets="@../styles/css/context-card.css" text="11:23" />
+      <Label fx:id="chatBody" layoutX="5.0" layoutY="35.0" prefHeight="30.0" prefWidth="222.0" styleClass="last_chat_label" stylesheets="@../styles/css/context-card.css" text="Label" />
+   </children>
+</AnchorPane>

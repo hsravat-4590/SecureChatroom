@@ -2,6 +2,7 @@ package com.ravat.hanzalah.securechat.client.context;
 
 import com.ravat.hanzalah.securechat.common.net.AddressInfo;
 import com.ravat.hanzalah.securechat.common.packets.DataPacket;
+import com.ravat.hanzalah.securechat.common.packets.SecurePayload;
 import com.ravat.hanzalah.securechat.common.util.serialization.ActionSerializable;
 
 import java.io.DataInputStream;
@@ -10,17 +11,21 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
-public class ChatContext implements ActionSerializable {
+public class ChatContext extends SecurePayload implements ActionSerializable {
     /**
      * The Name of the chat as displayed on the chat bar
      */
     public final String chatName;
+    private volatile String dateTimeOfLastMessage;
+    private volatile String lastChat;
     private String chatBuffer;
-    private final AddressInfo addressInfo;
-    private transient Socket mSocket;
     private transient Queue<DataPacket> sendQueue;
+    private transient String messagesString;
+    private transient List<ChatListener.MessageSentListener> sentListenerList;
+    private transient List<ChatListener.MessageRecievedListener> recievedListenerList;
 
     /**
      * Constructs a ChatContext and will attempt to establish a connection with the server to send/recieve
@@ -29,18 +34,15 @@ public class ChatContext implements ActionSerializable {
      * @param connectionPort The port of the server
      */
     public ChatContext(String chatName,String chatHost, int connectionPort){
+        super(new AddressInfo(chatHost,GlobalContext.getInstance().getNextAvailablePort(), connectionPort));
         this.chatName = chatName;
-        addressInfo = new AddressInfo(chatHost,GlobalContext.getInstance().getNextAvailablePort(), connectionPort);
         intializeEnvironment();
     }
 
     private void intializeEnvironment(){
-        try{
-            mSocket = new Socket(addressInfo.host,addressInfo.remotePort);
-        } catch(IOException ex){
-            ex.printStackTrace();
-        }
         sendQueue = new LinkedList<DataPacket>();
+        sentListenerList = new LinkedList<>();
+        recievedListenerList = new LinkedList<>();
     }
     /**
      * Action to be performed before serialization
@@ -79,11 +81,13 @@ public class ChatContext implements ActionSerializable {
             chatBuffer = content;
     }
 
-    public DataPacket generatePacket(){
-        DataPacket packet = new DataPacket() {
+    public String getDateTimeOfLastMessage(){return dateTimeOfLastMessage;}
+    public String getLastChat(){return lastChat;}
 
-        };
-        return packet;
+    public void addListener(ChatListener listener){
+        if(listener instanceof ChatListener.MessageSentListener)
+            sentListenerList.add((ChatListener.MessageSentListener) listener);
+        if(listener instanceof ChatListener.MessageRecievedListener)
+            recievedListenerList.add((ChatListener.MessageRecievedListener) listener);
     }
-
 }
