@@ -1,9 +1,7 @@
 package com.ravat.hanzalah.securechat.common.packets;
 
 import com.ravat.hanzalah.securechat.client.context.GlobalContext;
-import jdk.nashorn.internal.runtime.Context;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

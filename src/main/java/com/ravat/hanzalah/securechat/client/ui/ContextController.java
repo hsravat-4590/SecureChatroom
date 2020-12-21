@@ -3,6 +3,7 @@ package com.ravat.hanzalah.securechat.client.ui;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import com.ravat.hanzalah.securechat.Main;
 import com.ravat.hanzalah.securechat.client.context.ChatContext;
 import com.ravat.hanzalah.securechat.client.context.ChatListener;
 import com.ravat.hanzalah.securechat.client.context.GlobalContext;
@@ -15,8 +16,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-import javax.xml.crypto.Data;
+
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +29,16 @@ public class ContextController{
     @FXML
     JFXTextField searchField;
     List<AnchorPane> chats;
-
-    public ContextController(){
+    private MainActivity mainActivity;
+    public ContextController(MainActivity mainActivity){
         chats = new ArrayList<>();
+        this.mainActivity = mainActivity;
     }
 
     @FXML
     public void initialize(){
-        addNewChat(
-                new ChatContext("LocalHost","LocalHost",3020)
-        );
     }
+
 
     public void addNewChat(ChatContext context){
         try{
@@ -60,52 +61,57 @@ public class ContextController{
             root.setSpacing(10);
             root.setPadding(new Insets(10));
         }
+        scrollPane = new ScrollPane();
         scrollPane.setContent(root);
     }
 
-    public class ChatCardController implements ChatListener.MessageRecievedListener, ChatListener.MessageSentListener{
+    public class ChatCardController implements ChatListener.MessageRecievedListener, ChatListener.MessageSentListener {
         @FXML
         JFXButton chatButton;
         @FXML
         Label chatTitle;
-        @FXML Label chatDT;
-        @FXML Label chatBody;
+        @FXML
+        Label chatDT;
+        @FXML
+        Label chatBody;
 
         private ChatContext context;
-        public ChatCardController(ChatContext context){
+
+        public ChatCardController(ChatContext context) {
             this.context = context;
             context.addListener(this);
         }
-        public void initialize(){
+
+        public void initialize() {
             chatTitle.setText(context.chatName);
 
         }
 
         @FXML
-        public void onChatClicked(){
+        public void onChatClicked() {
             GlobalContext.getInstance().setCurrentContext(context);
+            mainActivity.loadChatView(context);
+        }
+
+        private void onChatActivity() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            chatDT.setText(context.getDateTimeOfLastMessage().toLocalDateTime().format(formatter));
+            String lastChat = context.getLastChat();
+            if (lastChat.length() > 100) {
+                chatBody.setText(lastChat.substring(0, 100));
+            } else {
+                chatBody.setText(lastChat);
+            }
         }
 
         @Override
         public void onMessageRecieved() {
-            chatDT.setText(context.getDateTimeOfLastMessage());
-            String lastChat = context.getLastChat();
-            if(lastChat.length() > 100){
-                chatBody.setText(lastChat.substring(0,100));
-            } else{
-                chatBody.setText(lastChat);
-            }
+            onChatActivity();
         }
 
         @Override
         public void onMessageSent() {
-            chatDT.setText(context.getDateTimeOfLastMessage());
-            String lastChat = context.getLastChat();
-            if(lastChat.length() > 100){
-                chatBody.setText(lastChat.substring(0,100));
-            } else{
-                chatBody.setText(lastChat);
-            }
+            onChatActivity();
         }
     }
 }

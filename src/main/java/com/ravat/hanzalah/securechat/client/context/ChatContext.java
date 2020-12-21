@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.Socket;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -19,7 +20,7 @@ public class ChatContext extends SecurePayload implements ActionSerializable {
      * The Name of the chat as displayed on the chat bar
      */
     public final String chatName;
-    private volatile String dateTimeOfLastMessage;
+    private volatile ZonedDateTime dateTimeOfLastMessage;
     private volatile String lastChat;
     private String chatBuffer;
     private transient Queue<DataPacket> sendQueue;
@@ -81,7 +82,7 @@ public class ChatContext extends SecurePayload implements ActionSerializable {
             chatBuffer = content;
     }
 
-    public String getDateTimeOfLastMessage(){return dateTimeOfLastMessage;}
+    public ZonedDateTime getDateTimeOfLastMessage(){return dateTimeOfLastMessage;}
     public String getLastChat(){return lastChat;}
 
     public void addListener(ChatListener listener){
