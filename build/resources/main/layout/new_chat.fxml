@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="532.0" prefWidth="403.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <JFXTextField fx:id="hostnameField" layoutX="170.0" layoutY="96.0" prefHeight="26.0" prefWidth="197.0" promptText="hostname" styleClass="form-labels" stylesheets="@../styles/css/new_chat.css" />
+      <JFXButton fx:id="connectButton" buttonType="RAISED" layoutX="169.0" layoutY="440.0" onAction="#onConnectAction" text="Connect" />
+      <JFXTextField fx:id="portField" layoutX="176.0" layoutY="141.0" prefHeight="26.0" prefWidth="197.0" promptText="port" styleClass="form-labels" stylesheets="@../styles/css/new_chat.css" />
+      <Label layoutX="23.0" layoutY="101.0" prefHeight="26.0" prefWidth="146.0" styleClass="form-labels" stylesheets="@../styles/css/new_chat.css" text="Hostname or IP Address" />
+      <Label layoutX="103.0" layoutY="141.0" prefHeight="26.0" prefWidth="55.0" styleClass="form-labels" stylesheets="@../styles/css/new_chat.css" text="Port" />
+      <JFXCheckBox checkedColor="#4285f4" layoutX="156.0" layoutY="191.0" styleClass="form-labels" stylesheets="@../styles/css/new_chat.css" text="Preserve Chats" />
+      <JFXProgressBar fx:id="connectingProgressBar" layoutX="102.0" layoutY="495.0" prefHeight="8.0" progress="0.0" style="-fx-border-color: 4285F4;" stylesheets="@../styles/css/new_chat.css" />
+      <JFXTextField fx:id="chatNameField" layoutX="170.0" layoutY="63.0" prefHeight="26.0" prefWidth="197.0" promptText="chatname" styleClass="form-labels" stylesheets="@../styles/css/new_chat.css" />
+      <Label layoutX="84.0" layoutY="62.0" prefHeight="32.0" prefWidth="78.0" styleClass="form-labels" stylesheets="@../styles/css/new_chat.css" text="Chat Name" />
+      <Label fx:id="errorLabel" alignment="CENTER" layoutX="32.0" layoutY="221.0" prefHeight="18.0" prefWidth="323.0" styleClass="error_label" stylesheets="@../styles/css/new_chat.css" textAlignment="CENTER" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" />
+   </children>
+</AnchorPane>
