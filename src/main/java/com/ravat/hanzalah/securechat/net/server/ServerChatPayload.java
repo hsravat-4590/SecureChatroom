@@ -1,6 +1,8 @@
-package com.ravat.hanzalah.securechat.net;
+package com.ravat.hanzalah.securechat.net.server;
 
-public class ServerPayload implements Packet.DataPayload {
+import com.ravat.hanzalah.securechat.net.Packet;
+
+public class ServerChatPayload implements Packet.DataPayload {
     public enum MessageTypes{
         NEW_USER,
         USER_LEFT,
@@ -10,7 +12,7 @@ public class ServerPayload implements Packet.DataPayload {
 
     public final String userName;
 
-    public ServerPayload(MessageTypes messageType, String userName){
+    public ServerChatPayload(MessageTypes messageType, String userName){
         this.messageTypes = messageType;
         this.userName = userName;
     }

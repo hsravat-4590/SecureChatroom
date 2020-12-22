@@ -1,6 +1,7 @@
 package com.ravat.hanzalah.securechat.net;
 
 import com.ravat.hanzalah.securechat.GlobalContext;
+import com.ravat.hanzalah.securechat.net.server.ServerChatPayload;
 
 import java.io.*;
 import java.time.ZoneId;
@@ -32,7 +33,11 @@ public interface Packet  {
          */
         public MetaData(DataPayload payload) {
             time = ZonedDateTime.now(ZoneId.of("UTC"));
-            author = GlobalContext.getInstance().mUserName;
+            if(payload instanceof ServerChatPayload){
+                author = "Server";
+            } else {
+                author = GlobalContext.getInstance().mUserName;
+            }
             payloadINF = payload.getClass().getCanonicalName();
         }
     }

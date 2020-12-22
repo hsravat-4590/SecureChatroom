@@ -5,9 +5,7 @@ import com.github.rjeschke.txtmark.*;
 import com.ravat.hanzalah.securechat.GlobalContext
 import com.ravat.hanzalah.securechat.net.ChatPayload
 import com.ravat.hanzalah.securechat.net.Client
-import com.ravat.hanzalah.securechat.net.Packet
-import com.ravat.hanzalah.securechat.net.ServerPayload
-import java.awt.TrayIcon
+import com.ravat.hanzalah.securechat.net.server.ServerChatPayload
 
 
 class WebviewRenderer(chatClient: Client){
@@ -20,13 +18,13 @@ class WebviewRenderer(chatClient: Client){
 
     fun addMessageToWebview():String{
         val payload = client.lastPayload
-        if(payload.payload is ServerPayload){
+        if(payload.payload is ServerChatPayload){
             // It's a server message (right now that just means that someone has entered or left)
             val divClass = "message_stamp"
             val messageCause = payload.payload.messageTypes
             val message = when(messageCause){
-                ServerPayload.MessageTypes.USER_LEFT -> "${payload.payload.userName} has left the chat"
-                ServerPayload.MessageTypes.NEW_USER -> "${payload.payload.userName} has entered the chat"
+                ServerChatPayload.MessageTypes.USER_LEFT -> "${payload.payload.userName} has left the chat"
+                ServerChatPayload.MessageTypes.NEW_USER -> "${payload.payload.userName} has entered the chat"
             }
             return """<div class= "message_stamp"> ${message} </div>"""
         } else if(payload.payload is ChatPayload){
