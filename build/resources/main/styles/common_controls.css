@@ -1,0 +1,13 @@
+.button{
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-weight:bold;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.text-area{
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-weight: 500;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
