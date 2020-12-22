@@ -3,3 +3,6 @@ build/
 .idea/
 
 build/classes/
+
+.class
+.compiler.options
