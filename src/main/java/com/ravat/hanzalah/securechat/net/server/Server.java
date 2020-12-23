@@ -13,7 +13,7 @@ import java.util.*;
 
 public class Server implements Runnable{
     private final int port;
-    private Map<String,ClientConnection> connectionMap;
+    private volatile Map<String,ClientConnection> connectionMap;
     private final ServerSocket serverSocket;
     private volatile Queue<byte[]> outQueue;
     private volatile boolean isRunning;
@@ -46,21 +46,28 @@ public class Server implements Runnable{
     public void run(){
         while (isRunning){
             try{
+                System.out.println("Waiting for Clients...");
                 Socket inSocket = serverSocket.accept();
+                System.out.println("Client Found: "+ inSocket.getRemoteSocketAddress());
                 DataInputStream inputStream = new DataInputStream(inSocket.getInputStream());
-                byte[] handshakePacket = inputStream.readAllBytes();
+                System.out.print("Waiting for handshake...");
+                byte[] packet = new byte[1000];
+                int handshakePacket = inputStream.read(packet);
+                System.out.print("done" + "Packet Value was: " + handshakePacket +"\n");
                 ClientConnection newConnection = new ClientConnection(inSocket,this);
-                String usr = Packet.deserializeObject(handshakePacket).metaData.author;
+                String usr = Packet.deserializeObject(packet).metaData.author;
                 connectionMap.put(usr,newConnection);
+                System.out.println("User Connected: " + inSocket.getRemoteSocketAddress().toString() + " Username is: " + usr);
                 // Send a server message indicating that a new user has joined
                 byte[] toSend = Packet.serialiseObject(
                         new Packet.Payload(new ServerChatPayload(ServerChatPayload.MessageTypes.NEW_USER,usr))
                         );
+                System.out.println("Sending out Message to All Users indicating that a new user has joined the Chat");
+                addOutMessage(toSend);
                 newConnection.start();
             } catch (IOException | ClassNotFoundException ex){
                 ex.printStackTrace();
             }
         }
     }
-
 }

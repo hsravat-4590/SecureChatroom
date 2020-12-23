@@ -28,6 +28,7 @@ public final class GlobalContext implements Serializable {
     }
     private GlobalContext(String userName){
         mUserName = userName;
+        isRunning = true;
     }
     /**
      * Gets the GlobalContext instance
@@ -51,6 +52,7 @@ public final class GlobalContext implements Serializable {
          */
         public static void createNewContext(String userName){
             GlobalContext newContext = new GlobalContext(userName);
+            context = newContext;
         }
 
         /**

@@ -33,12 +33,18 @@ public class ClientConnection extends Thread{
             // This thread will monitor the socket connection and read messages and send messages from the outQueue
             //Send first then recieve
             try {
-                byte[] outMsg = outQueue.remove();
-                if(!hashedMessages.contains(Arrays.hashCode(outMsg)))
-                    dataOutputStream.write(outQueue.remove());
-                byte[] in = dataInputStream.readAllBytes();
-                hashedMessages.add(Arrays.hashCode(in));
-                serverInstance.addOutMessage(in);
+                if(outQueue.size() > 0) {
+                    byte[] outMsg = outQueue.remove();
+                    if (!hashedMessages.contains(Arrays.hashCode(outMsg)))
+                        dataOutputStream.write(outMsg,0,outMsg.length);
+                }
+                byte[] in = new byte[1000];
+                int inputValue = dataInputStream.read(in);
+                if(inputValue > 0) {
+                    System.out.println("Message Recieved of length: " + inputValue);
+                    hashedMessages.add(Arrays.hashCode(in));
+                    serverInstance.addOutMessage(in);
+                }
             } catch (IOException exception) {
                 exception.printStackTrace();
             }

@@ -20,14 +20,16 @@ public class ChatView implements Client.ChatListener.InboundListener,Client.Chat
     @FXML
     private void initialize(){
         webEngine = chatWebView.getEngine();
-        chatWebView.setContextMenuEnabled(false);
+        //chatWebView.setContextMenuEnabled(false);
         webEngine.setUserStyleSheetLocation(getClass().getResource("/styles/webview.css").toString());
         webEngine.loadContent("<p>Placeholder Message... This message will dissapear once a chat is sent or recieved</p>");
-
+        chatTextArea.setText("Write your Message Here");
         chatClient = GlobalContext.getInstance().getChatClient();
         if(chatClient !=null){
             chatClient.addListener(this);
             webviewRenderer = new WebviewRenderer(chatClient);
+        } else {
+            System.err.println("Error: ChatClient has not been set in the Global Context");
         }
     }
     @FXML

@@ -56,7 +56,7 @@ public class MainActivity extends Application {
 
     }
     public void changeContext(@NotNull AnchorPane contentAnchor){
-        contentAnchor.getChildren().setAll(contentAnchor);
+        this.contentAnchor.getChildren().addAll(contentAnchor);
     }
 
     public void changeAppTitle(String newTitle){

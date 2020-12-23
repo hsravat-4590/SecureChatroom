@@ -85,25 +85,27 @@ public class NewChat {
                 try {
                     Client newClient = new Client(new AddressInfo(hostnameField.getText(),port));
                     GlobalContext.getInstance().setChatClient(newClient);
+                    System.out.println("Set the ChatClient in the Global Context");
                 } catch (IOException exception) {
                     errorLabel.setText("ERROR: Unable to connect to host on the specified port");
                     connectionSuccessful.set(false);
                 }
+                if(connectionSuccessful.get()){
+                    // Create a chat window to replace this one
+                    try{
+                        final FXMLLoader loader = new FXMLLoader();
+                        loader.setLocation(getClass().getResource("/layout/ChatView.fxml"));
+                        AnchorPane content = (AnchorPane) loader.load();
+                        mContextSwitcher.changeContext(content);
+                        appBarNameSwitcher.changeAppTitle(chatName);
+                    } catch (IOException ex){
+                        ex.printStackTrace();
+                    }
+                }
             } //Nothing yet for server stuff :-(
             connectingProgressBar.setProgress(0);
         });
-        if(connectionSuccessful.get()){
-            // Create a chat window to replace this one
-            try{
-                final FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("/layout/ChatView.fxml"));
-                AnchorPane content = (AnchorPane) loader.load();
-                mContextSwitcher.changeContext(content);
-                appBarNameSwitcher.changeAppTitle(chatName);
-            } catch (IOException ex){
-                ex.printStackTrace();
-            }
-        }
+
 
     }
 

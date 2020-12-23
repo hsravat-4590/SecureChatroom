@@ -12,7 +12,7 @@ public interface Packet  {
     /**
      * A structure which holds relevant metadata regarding the message
      */
-    class MetaData {
+    class MetaData implements Serializable {
         /**
          * The user that authored the message
          */
@@ -63,7 +63,7 @@ public interface Packet  {
          * @param packet An implementation of DataPacket
          * @return The supplied DataPacket in byte form
          */
-        static byte[] serialiseObject(Payload packet){
+        static byte[] serialiseObject(Payload packet)  {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream out = null;
             byte[] objectArray = null;
@@ -74,6 +74,13 @@ public interface Packet  {
                 objectArray = byteArrayOutputStream.toByteArray();
             } catch (IOException exception) {
                 exception.printStackTrace();
+            } finally {
+                try {
+                    out.close();
+                    byteArrayOutputStream.close();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
             }
             return objectArray;
         }
@@ -88,8 +95,9 @@ public interface Packet  {
         static Payload deserializeObject(byte[] data) throws IOException, ClassNotFoundException {
             ByteArrayInputStream in = new ByteArrayInputStream(data);
             ObjectInputStream is = new ObjectInputStream(in);
-            if(is.readObject() instanceof Payload) {
-                return (Payload)is.readObject();
+            Payload output = (Payload) is.readObject();
+            if(output instanceof Payload) {
+                return output;
             } else {
                 throw new InvalidObjectException("Error: Expected a Payload Type");
             }
