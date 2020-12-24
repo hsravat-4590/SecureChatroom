@@ -94,7 +94,7 @@ public class Client implements Runnable{
                         outListener.onMessageSent();
                     }
                 }
-                byte[] inboundMessage = new byte[1000];
+                byte[] inboundMessage = new byte[Packet.MAX_PACKET_LENGTH];
                 int inboundMessageValue = dataInputStream.read(inboundMessage);
                 if(inboundMessageValue > 0) {
                     Packet.Payload inPayload = Packet.deserializeObject(inboundMessage);

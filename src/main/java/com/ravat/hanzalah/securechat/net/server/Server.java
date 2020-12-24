@@ -51,7 +51,7 @@ public class Server implements Runnable{
                 System.out.println("Client Found: "+ inSocket.getRemoteSocketAddress());
                 DataInputStream inputStream = new DataInputStream(inSocket.getInputStream());
                 System.out.print("Waiting for handshake...");
-                byte[] packet = new byte[1000];
+                byte[] packet = new byte[Packet.MAX_PACKET_LENGTH];
                 int handshakePacket = inputStream.read(packet);
                 System.out.print("done" + "Packet Value was: " + handshakePacket +"\n");
                 ClientConnection newConnection = new ClientConnection(inSocket,this);

@@ -1,5 +1,7 @@
 package com.ravat.hanzalah.securechat.net.server;
 
+import com.ravat.hanzalah.securechat.net.Packet;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -38,7 +40,7 @@ public class ClientConnection extends Thread{
                     if (!hashedMessages.contains(Arrays.hashCode(outMsg)))
                         dataOutputStream.write(outMsg,0,outMsg.length);
                 }
-                byte[] in = new byte[1000];
+                byte[] in = new byte[Packet.MAX_PACKET_LENGTH];
                 int inputValue = dataInputStream.read(in);
                 if(inputValue > 0) {
                     System.out.println("Message Recieved of length: " + inputValue);

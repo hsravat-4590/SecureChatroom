@@ -8,7 +8,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public interface Packet  {
-
+    /**
+     * The maximum size of a packet
+     */
+    public static int MAX_PACKET_LENGTH = 1024;
     /**
      * A structure which holds relevant metadata regarding the message
      */
