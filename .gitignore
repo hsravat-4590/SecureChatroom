@@ -6,3 +6,5 @@ build/classes/
 
 .class
 .compiler.options
+
+*.class
