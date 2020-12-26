@@ -1,7 +1,6 @@
 package com.ravat.hanzalah.securechat.net;
 
 import com.ravat.hanzalah.securechat.GlobalContext;
-import soot.Pack;
 
 import java.io.*;
 import java.net.Socket;
@@ -11,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class Client implements Runnable{
+public class Client{
     private final Socket mSocket;
     private final DataInputStream dataInputStream;
     private final DataOutputStream dataOutputStream;
@@ -22,7 +21,6 @@ public class Client implements Runnable{
     private volatile Queue<byte[]> outQueue;
     private volatile List<ChatListener.InboundListener> inListeners;
     private volatile List<ChatListener.OutboundListener> outListeners;
-    private final Thread mThread;
 
     public Client(AddressInfo addressInfo) throws IOException {
         mSocket = new Socket(addressInfo.host,addressInfo.port);
@@ -40,8 +38,8 @@ public class Client implements Runnable{
         outQueue = new LinkedList<>();
         inListeners = new LinkedList<>();
         outListeners = new LinkedList<>();
-        mThread = new Thread(this::run,"CLIENT_THREAD");
-        mThread.start();
+        outThread.start();
+        inThread.start();
     }
 
     public void sendMessage(String message){
@@ -50,19 +48,6 @@ public class Client implements Runnable{
         setLastChatPayload(sendPayload);
         lastPayload = sendPayload;
         outQueue.add(Packet.serialiseObject(sendPayload));
-        byte[] toSend = Packet.serialiseObject(sendPayload);
-        try {
-            dataOutputStream.write(toSend,0,toSend.length);
-            for(ChatListener.OutboundListener outListener:
-                    outListeners){
-                System.out.println("Sending message sent broadcast");
-                outListener.onMessageSent();
-            }
-            lastChatPayload = sendPayload;
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-
         lastMessageTime = sendPayload.metaData.time;
 
     }
@@ -78,44 +63,76 @@ public class Client implements Runnable{
     public synchronized Packet.Payload getLastPayload(){
         return lastPayload;
     }
-    @Override
-    public void run(){
-        while (GlobalContext.getInstance().getStatus()) {
-            try {
-                if (outQueue.peek() != null) {
-                    // We have to send some messages!
-                    byte[] toSend = outQueue.remove();
-                    System.out.print("Sending...");
-                    dataOutputStream.write(toSend,0,toSend.length);
-                    System.out.println("Message Sent Dud");
-                    for(ChatListener.OutboundListener outListener:
-                            outListeners){
-                        System.out.println("Sending message sent broadcast");
-                        outListener.onMessageSent();
+
+    private final Thread inThread = new Thread() {
+        @Override
+        public void run() {
+            while (GlobalContext.getInstance().getStatus()) {
+                try {
+                    System.out.println("Trying to read these daym packets");
+                    byte[] inboundMessage = new byte[Packet.MAX_PACKET_LENGTH];
+                    int inboundMessageValue = dataInputStream.read(inboundMessage);
+                    System.out.println("A message has been recieved of length: " + inboundMessageValue);
+                    //Send an ACK payload
+                    dataOutputStream.write(ACKPayload.ACK_BYTES);
+                    if (inboundMessageValue > 0) {
+                        Packet.Payload inPayload = Packet.deserializeObject(inboundMessage);
+                        inQueue.add(inPayload);
+                        System.out.println("Added a message to the inQueue");
+                        for (ChatListener.InboundListener inListener :
+                                inListeners) {
+                            setLastChatPayload(inPayload);
+                            inListener.onMessageRecieved();
+                        }
                     }
+                } catch (IOException | ClassNotFoundException exception) {
+                    exception.printStackTrace();
                 }
-                byte[] inboundMessage = new byte[Packet.MAX_PACKET_LENGTH];
-                int inboundMessageValue = dataInputStream.read(inboundMessage);
-                if(inboundMessageValue > 0) {
-                    Packet.Payload inPayload = Packet.deserializeObject(inboundMessage);
-                    inQueue.add(inPayload);
-                    System.out.println("Added a message to the inQueue");
-                    for (ChatListener.InboundListener inListener :
-                            inListeners) {
-                        setLastChatPayload(inPayload);
-                        inListener.onMessageRecieved();
-                    }
+                // Add a buffer to improve performance and reduce risk of server overload
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException | ClassNotFoundException exception) {
-                exception.printStackTrace();
             }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            System.out.println("Status is set to false... Quitting inThread");
         }
-    }
+
+    };
+
+    private final Thread outThread = new Thread() {
+        @Override
+        public void run() {
+            while (GlobalContext.getInstance().getStatus()) {
+                if(outQueue.size() > 0) {
+                    try {
+                        byte[] toSend = outQueue.remove();
+                        if (toSend != null) {
+                            // We have to send some messages!
+                            System.out.print("Sending...");
+                            dataOutputStream.write(toSend, 0, toSend.length);
+                            System.out.println("Message Sent Dud");
+                            for (ChatListener.OutboundListener outListener :
+                                    outListeners) {
+                                System.out.println("Sending message sent broadcast");
+                                outListener.onMessageSent();
+                            }
+                        }
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
+                }
+                // Add a buffer to improve performance and reduce risk of server overload
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Status is set to false... Quitting inThread");
+        }
+    };
+
     public void addListener(ChatListener listener){
         if(listener instanceof ChatListener.InboundListener)
             inListeners.add((ChatListener.InboundListener) listener);

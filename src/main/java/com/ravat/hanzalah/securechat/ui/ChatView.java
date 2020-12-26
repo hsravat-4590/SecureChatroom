@@ -3,6 +3,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.ravat.hanzalah.securechat.GlobalContext;
 import com.ravat.hanzalah.securechat.net.Client;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebEngine;
@@ -39,7 +40,8 @@ public class ChatView implements Client.ChatListener.InboundListener,Client.Chat
     }
 
     private void onMessageActions(){
-        webEngine.loadContent(webviewRenderer.addMessageToWebview());
+        Platform.runLater(() -> webEngine.loadContent(webviewRenderer.addMessageToWebview()));
+
     }
     @Override
     public void onMessageRecieved() {

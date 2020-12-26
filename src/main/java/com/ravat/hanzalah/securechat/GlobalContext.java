@@ -25,6 +25,7 @@ public final class GlobalContext implements Serializable {
 
     private GlobalContext(){
         mUserName = DEFAULT_USERNAME;
+        isRunning = true;
     }
     private GlobalContext(String userName){
         mUserName = userName;
@@ -73,7 +74,7 @@ public final class GlobalContext implements Serializable {
 
     }
 
-    public boolean getStatus(){return isRunning;}
+    public synchronized boolean getStatus(){return isRunning;}
 
     public void setChatClient(Client chatClient){this.chatClient = chatClient;}
 
