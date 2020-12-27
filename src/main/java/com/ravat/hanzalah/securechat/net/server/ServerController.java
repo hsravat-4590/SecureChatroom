@@ -1,8 +1,7 @@
-package com.ravat.hanzalah.securechat.net.server2;
+package com.ravat.hanzalah.securechat.net.server;
 
 
 import java.io.IOException;
-import java.util.Map;
 
 public class ServerController {
 

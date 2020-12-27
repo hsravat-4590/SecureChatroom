@@ -1,4 +1,4 @@
-package com.ravat.hanzalah.securechat.net.server2;
+package com.ravat.hanzalah.securechat.net.server;
 
 import com.ravat.hanzalah.securechat.net.ACKPayload;
 import com.ravat.hanzalah.securechat.net.ChatPayload;

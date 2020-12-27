@@ -1,10 +1,7 @@
-package com.ravat.hanzalah.securechat.net.server2;
+package com.ravat.hanzalah.securechat.net.server;
 
 import com.ravat.hanzalah.securechat.net.ACKPayload;
-import com.ravat.hanzalah.securechat.net.ChatPayload;
 import com.ravat.hanzalah.securechat.net.Packet;
-import com.ravat.hanzalah.securechat.net.server.ServerChatPayload;
-import soot.Pack;
 
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
