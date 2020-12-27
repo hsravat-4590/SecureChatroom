@@ -37,11 +37,20 @@ public class ChatView implements Client.ChatListener.InboundListener,Client.Chat
     @FXML
     private void onSendAction(){
         // Do Send Stuff
-        chatClient.sendMessage(chatTextArea.getText());
+        if(!(chatTextArea.getText().equals(""))) {
+            chatClient.sendMessage(chatTextArea.getText());
+            chatTextArea.setText("");
+        }
     }
 
     private void onMessageActions(Packet.Payload payload){
-        Platform.runLater(() -> webEngine.loadContent(webviewRenderer.addMessageToWebview(payload)));
+        Platform.runLater(() -> {
+            webEngine.setJavaScriptEnabled(true);
+            int scrollVal = getVScrollValue();
+            webEngine.loadContent(webviewRenderer.addMessageToWebview(payload));
+            webEngine.executeScript("window.scrollTo(" + scrollVal + ", " + scrollVal + ")");
+            webEngine.setJavaScriptEnabled(false);
+        });
 
     }
     @Override
@@ -52,5 +61,15 @@ public class ChatView implements Client.ChatListener.InboundListener,Client.Chat
     @Override
     public void onMessageSent(Packet.Payload payload) {
         onMessageActions(payload);
+    }
+
+    /**
+     * Returns the vertical scroll value, i.e. thumb position.
+     * This is equivalent to {@link javafx.scene.control.ScrollBar#getValue().
+     * @param view
+     * @return vertical scroll value
+     */
+    private int getVScrollValue() {
+        return (Integer) webEngine.executeScript("window.scrollY");
     }
 }

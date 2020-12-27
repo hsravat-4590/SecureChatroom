@@ -35,11 +35,13 @@ public class Connection {
             exception.printStackTrace();
         }
     }
-    protected Object read()throws SocketTimeoutException{
+    protected Object read()throws SocketTimeoutException,SocketException{
         try {
             return objectInputStream.readObject();
         } catch (SocketTimeoutException exception) {
             throw new SocketTimeoutException();
+        } catch (SocketException exception){
+            throw new SocketException();
         } catch (ClassNotFoundException|IOException ex){
             ex.printStackTrace();
         }
@@ -51,7 +53,7 @@ public class Connection {
             send(payload);
     }
 
-    public Packet.Payload readPayload() throws SocketTimeoutException {
+    public Packet.Payload readPayload() throws SocketTimeoutException,SocketException {
         Object recv = read();
         if(recv instanceof  Packet.Payload){
             return (Packet.Payload) recv;

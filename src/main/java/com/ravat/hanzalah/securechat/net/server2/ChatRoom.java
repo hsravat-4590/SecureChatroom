@@ -6,6 +6,7 @@ import com.ravat.hanzalah.securechat.net.Packet;
 import com.ravat.hanzalah.securechat.net.server.ServerChatPayload;
 import soot.Pack;
 
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,6 +48,11 @@ public class ChatRoom {
         messageQueue.add(new Packet.Payload(new ServerChatPayload(ServerChatPayload.MessageTypes.NEW_USER,name)));
     }
 
+    private synchronized void removeUser(String name){
+        connections.remove(name);
+        messageQueue.add(new Packet.Payload(new ServerChatPayload(ServerChatPayload.MessageTypes.USER_LEFT,name)));
+    }
+
     private final Thread readThread = new Thread(() -> {
         while(ServerController.isServerRunning()){
             //System.out.println("Reading message...");
@@ -61,6 +67,10 @@ public class ChatRoom {
                     }
                 } catch(SocketTimeoutException exception){
                     continue;
+                } catch(SocketException exception){
+                    //The user has been disconnected
+                    System.out.println("The user has been disconnected!!!");
+                    removeUser(entry.getKey());
                 }
             }
         }

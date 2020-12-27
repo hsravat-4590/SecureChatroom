@@ -24,7 +24,7 @@ class WebviewRenderer(chatClient: Client) {
     }
 
     fun addMessageToWebview(payload: Packet.Payload):String{
-        println("Renderer Invoked")
+        //println("Renderer Invoked")
         when (payload.payload) {
             is ServerChatPayload -> {
                 // It's a server message (right now that just means that someone has entered or left)
@@ -57,7 +57,6 @@ class WebviewRenderer(chatClient: Client) {
                               <h6><b>${date}</b></h6>
                             </div>
                           </div>
-                          <div class = "spacing"></div>
                     """.trimIndent()
                 // Append to current HTML
                 addToBody(divTag)
@@ -65,7 +64,7 @@ class WebviewRenderer(chatClient: Client) {
             }
         }
         //Generate new HTML body to return
-        println("Generated: ${HTMLHeaders.plus(HTMLBody).plus("</body>")}")
+        //println("Generated: ${HTMLHeaders.plus(HTMLBody).plus("</body>")}")
 
         return HTMLHeaders.plus(HTMLBody.joinToString()).plus("</body>")
     }

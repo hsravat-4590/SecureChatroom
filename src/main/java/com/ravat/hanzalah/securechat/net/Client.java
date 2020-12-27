@@ -80,8 +80,10 @@ public class Client{
                             System.out.println("Added a message to the inQueue");
                             for (ChatListener.InboundListener inListener :
                                     inListeners) {
-                                setLastChatPayload(inPayload);
-                                inListener.onMessageRecieved(inPayload);
+                                if(!(inPayload.metaData.author.equals(GlobalContext.getInstance().mUserName))) {
+                                    setLastChatPayload(inPayload);
+                                    inListener.onMessageRecieved(inPayload);
+                                }
                             }
                         }
                     } catch (IOException | ClassNotFoundException exception) {
