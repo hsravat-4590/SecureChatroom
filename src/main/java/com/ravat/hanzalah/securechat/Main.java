@@ -1,6 +1,7 @@
 package com.ravat.hanzalah.securechat;
 
 import com.ravat.hanzalah.securechat.net.server.Server;
+import com.ravat.hanzalah.securechat.net.server2.ServerController;
 import com.ravat.hanzalah.securechat.ui.MainActivity;
 
 import java.io.IOException;
@@ -13,13 +14,12 @@ public class Main {
         } else{
             int port = Integer.parseInt(args[0]);
             if(port > 0){
-                Server chatServer = null;
+                ServerController chatServer = null;
                 try {
-                    chatServer = new Server(port);
+                    chatServer = new ServerController(port);
                 } catch (IOException exception) {
                     exception.printStackTrace();
                 }
-                chatServer.startServer();
             }
         }
     }

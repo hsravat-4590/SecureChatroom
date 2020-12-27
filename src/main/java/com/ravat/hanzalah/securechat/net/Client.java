@@ -12,27 +12,27 @@ import java.util.Queue;
 
 public class Client{
     private final Socket mSocket;
-    private final DataInputStream dataInputStream;
-    private final DataOutputStream dataOutputStream;
+    private final ObjectInputStream objectInputStream;
+    private final ObjectOutputStream objectOutputStream;
     private volatile Packet.Payload lastPayload;
     private Packet.Payload lastChatPayload;
     private ZonedDateTime lastMessageTime;
     private volatile Queue<Packet.Payload> inQueue;
-    private volatile Queue<byte[]> outQueue;
+    private volatile Queue<Packet.Payload> outQueue;
     private volatile List<ChatListener.InboundListener> inListeners;
     private volatile List<ChatListener.OutboundListener> outListeners;
 
-    public Client(AddressInfo addressInfo) throws IOException {
+    public Client(AddressInfo addressInfo,String chatName) throws IOException {
         mSocket = new Socket(addressInfo.host,addressInfo.port);
-        dataInputStream = new DataInputStream(mSocket.getInputStream());
-        dataOutputStream = new DataOutputStream(mSocket.getOutputStream());
+        objectOutputStream = new ObjectOutputStream(mSocket.getOutputStream());
+        objectInputStream = new ObjectInputStream(mSocket.getInputStream());
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.print("Sending Handshake...");
-        dataOutputStream.write(Packet.serialiseObject(new Packet.Payload(ChatPayload.HANDSHAKE_PAYLOAD)));
+        objectOutputStream.writeObject(new Packet.Payload(new ChatPayload(chatName)));
         System.out.println("done");
         inQueue = new LinkedList<>();
         outQueue = new LinkedList<>();
@@ -47,7 +47,7 @@ public class Client{
         Packet.Payload sendPayload = new Packet.Payload(new ChatPayload(message));
         setLastChatPayload(sendPayload);
         lastPayload = sendPayload;
-        outQueue.add(Packet.serialiseObject(sendPayload));
+        outQueue.add(sendPayload);
         lastMessageTime = sendPayload.metaData.time;
 
     }
@@ -67,26 +67,25 @@ public class Client{
     private final Thread inThread = new Thread() {
         @Override
         public void run() {
+            int lastHash = -1;
             while (GlobalContext.getInstance().getStatus()) {
                 try {
-                    System.out.println("Trying to read these daym packets");
-                    byte[] inboundMessage = new byte[Packet.MAX_PACKET_LENGTH];
-                    int inboundMessageValue = dataInputStream.read(inboundMessage);
-                    System.out.println("A message has been recieved of length: " + inboundMessageValue);
-                    //Send an ACK payload
-                    dataOutputStream.write(ACKPayload.ACK_BYTES);
-                    if (inboundMessageValue > 0) {
-                        Packet.Payload inPayload = Packet.deserializeObject(inboundMessage);
-                        inQueue.add(inPayload);
-                        System.out.println("Added a message to the inQueue");
-                        for (ChatListener.InboundListener inListener :
-                                inListeners) {
-                            setLastChatPayload(inPayload);
-                            inListener.onMessageRecieved();
+                    Packet.Payload inPayload = (Packet.Payload) objectInputStream.readObject();
+                        System.out.println("A message has been recieved by" + GlobalContext.getInstance().mUserName);
+                        //Send an ACK payload
+                        objectOutputStream.writeObject(new Packet.Payload(new ACKPayload()));
+                        if (inPayload != null) {
+                            System.out.println("This message was sent by: " + inPayload.metaData.author);
+                            inQueue.add(inPayload);
+                            System.out.println("Added a message to the inQueue");
+                            for (ChatListener.InboundListener inListener :
+                                    inListeners) {
+                                setLastChatPayload(inPayload);
+                                inListener.onMessageRecieved(inPayload);
+                            }
                         }
-                    }
-                } catch (IOException | ClassNotFoundException exception) {
-                    exception.printStackTrace();
+                    } catch (IOException | ClassNotFoundException exception) {
+                        exception.printStackTrace();
                 }
                 // Add a buffer to improve performance and reduce risk of server overload
                 try {
@@ -106,16 +105,16 @@ public class Client{
             while (GlobalContext.getInstance().getStatus()) {
                 if(outQueue.size() > 0) {
                     try {
-                        byte[] toSend = outQueue.remove();
+                        Packet.Payload toSend = outQueue.remove();
                         if (toSend != null) {
                             // We have to send some messages!
                             System.out.print("Sending...");
-                            dataOutputStream.write(toSend, 0, toSend.length);
+                            objectOutputStream.writeObject(toSend);
                             System.out.println("Message Sent Dud");
                             for (ChatListener.OutboundListener outListener :
                                     outListeners) {
                                 System.out.println("Sending message sent broadcast");
-                                outListener.onMessageSent();
+                                outListener.onMessageSent(toSend);
                             }
                         }
                     } catch (IOException exception) {
@@ -142,10 +141,10 @@ public class Client{
     }
     public interface ChatListener{
         interface InboundListener extends ChatListener{
-            void onMessageRecieved();
+            void onMessageRecieved(Packet.Payload payload);
         }
         interface OutboundListener extends ChatListener{
-            void onMessageSent();
+            void onMessageSent(Packet.Payload payload);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.github.rjeschke.txtmark.*;
 import com.ravat.hanzalah.securechat.GlobalContext
 import com.ravat.hanzalah.securechat.net.ChatPayload
 import com.ravat.hanzalah.securechat.net.Client
+import com.ravat.hanzalah.securechat.net.Packet
 import com.ravat.hanzalah.securechat.net.server.ServerChatPayload
 import java.util.ArrayList
 import java.util.stream.Stream
@@ -22,15 +23,10 @@ class WebviewRenderer(chatClient: Client) {
         println("Initialised Webview Renderer")
     }
 
-    fun addMessageToWebview():String{
+    fun addMessageToWebview(payload: Packet.Payload):String{
         println("Renderer Invoked")
-        val payload = client.lastPayload
-        when {
-            payload == null -> {
-                println("The Payload is null")
-                return HTMLHeaders.plus(HTMLBody).plus("</body>")
-            }
-            payload.payload is ServerChatPayload -> {
+        when (payload.payload) {
+            is ServerChatPayload -> {
                 // It's a server message (right now that just means that someone has entered or left)
                 val divClass = "message_stamp"
                 val messageCause = payload.payload.messageTypes
@@ -38,10 +34,10 @@ class WebviewRenderer(chatClient: Client) {
                     ServerChatPayload.MessageTypes.USER_LEFT -> "${payload.payload.userName} has left the chat"
                     ServerChatPayload.MessageTypes.NEW_USER -> "${payload.payload.userName} has entered the chat"
                 }
-                val divTag=  """<div class= "message_stamp"> ${message} </div>"""
+                val divTag=  """<div class= "message_stamp"> $message </div>"""
                 addToBody(divTag)
             }
-            payload.payload is ChatPayload -> {
+            is ChatPayload -> {
                 // Its a chat!
                 val author = payload.metaData.author
                 val formatter = DateTimeFormatter.ofPattern("HH:mm")

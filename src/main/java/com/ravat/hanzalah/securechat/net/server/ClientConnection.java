@@ -3,34 +3,33 @@ package com.ravat.hanzalah.securechat.net.server;
 import com.ravat.hanzalah.securechat.net.ACKPayload;
 import com.ravat.hanzalah.securechat.net.Packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.*;
 
 public class ClientConnection extends Thread{
     private final Socket socket;
     private final Server serverInstance;
     private volatile Queue<PacketRecord> outQueue;
-    private final DataInputStream dataInputStream;
-    private final DataOutputStream dataOutputStream;
+    private final ObjectInputStream objectInputStream;
+    private final ObjectOutputStream objectOutputStream;
     private final Set<Integer> hashedMessages;
     private final String userName;
 
 
-    public ClientConnection(String userName,Socket socket,Server server) throws IOException {
+    public ClientConnection(String userName,Socket socket,Server server,ObjectOutputStream outputStream, ObjectInputStream inputStream) throws IOException {
         super();
         this.userName = userName;
         this.socket = socket;
         this.serverInstance = server;
         outQueue = new LinkedList<>();
-        this.dataInputStream = new DataInputStream(socket.getInputStream());
-        this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
+        this.objectOutputStream = outputStream;
+        this.objectInputStream = inputStream;
         this.hashedMessages = new HashSet<>();
     }
 
-    public synchronized void addToOutQueue(String author,byte[] outMessage){
+    public synchronized void addToOutQueue(String author,Packet.Payload outMessage){
         outQueue.add(new PacketRecord(author,outMessage));
     }
     @Override
@@ -42,21 +41,31 @@ public class ClientConnection extends Thread{
                 if(outQueue.size() > 0) {
                     PacketRecord out = outQueue.remove();
                     if(!out.getAuthor().equals(userName)){
-                        byte[] outMsg = out.getPacket();
-                        dataOutputStream.write(outMsg, 0, outMsg.length);
+                        Packet.Payload outMsg = out.getPacket();
+                        objectOutputStream.writeObject(outMsg);
                         System.out.println("Sent The message to: " + userName);
                     }
                 }
-                byte[] in = new byte[Packet.MAX_PACKET_LENGTH];
-                int inputValue = dataInputStream.read(in);
-                if(inputValue > 0) {
-                    System.out.println("Message Recieved of length: " + inputValue);
-                    dataOutputStream.write(ACKPayload.ACK_BYTES);
-                    hashedMessages.add(Arrays.hashCode(in));
-                    serverInstance.addOutMessage(userName,in);
-                } else if(inputValue == -1){
-                    // The user has disconnected it seems
+                try {
+                    byte[] in = new byte[Packet.MAX_PACKET_LENGTH];
+                    Packet.Payload inPayload = (Packet.Payload) objectInputStream.readObject();
+                    if (inPayload != null) {
+                        if (inPayload.payload instanceof ACKPayload) {
+                            System.out.println("ACK recieved");
+                        }
+                        else {
+                            System.out.println("Message Recieved from " + inPayload.metaData.author);
+                        }
+                        objectOutputStream.writeObject(new ACKPayload());
+                        serverInstance.addOutMessage(userName, inPayload);
+                    } else{
+                        serverInstance.onClientDisconnected(userName);
+                    }
+                } catch (SocketException socketException){
+                    //The connection may have been interrupted
                     serverInstance.onClientDisconnected(userName);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
             } catch (IOException exception) {
                 exception.printStackTrace();

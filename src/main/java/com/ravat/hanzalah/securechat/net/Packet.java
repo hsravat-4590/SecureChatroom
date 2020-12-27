@@ -11,7 +11,7 @@ public interface Packet  {
     /**
      * The maximum size of a packet
      */
-    public static int MAX_PACKET_LENGTH = 1024;
+    public static int MAX_PACKET_LENGTH = 4096;
     /**
      * A structure which holds relevant metadata regarding the message
      */
@@ -99,7 +99,7 @@ public interface Packet  {
             ByteArrayInputStream in = new ByteArrayInputStream(data);
             ObjectInputStream is = new ObjectInputStream(in);
             Payload output = (Payload) is.readObject();
-            if(output instanceof Payload) {
+            if(output != null) {
                 return output;
             } else {
                 throw new InvalidObjectException("Error: Expected a Payload Type");

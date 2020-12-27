@@ -83,7 +83,7 @@ public class NewChat {
             GlobalContext.ContextFactory.createNewContext(usernameField.getText());
             if(!selfHost){
                 try {
-                    Client newClient = new Client(new AddressInfo(hostnameField.getText(),port));
+                    Client newClient = new Client(new AddressInfo(hostnameField.getText(),port),chatName);
                     GlobalContext.getInstance().setChatClient(newClient);
                     System.out.println("Set the ChatClient in the Global Context");
                 } catch (IOException exception) {
