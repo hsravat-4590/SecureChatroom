@@ -1,6 +1,5 @@
 package com.ravat.hanzalah.securechat;
 
-import com.ravat.hanzalah.securechat.net.server.Server;
 import com.ravat.hanzalah.securechat.net.server.ServerController;
 import com.ravat.hanzalah.securechat.ui.MainActivity;
 

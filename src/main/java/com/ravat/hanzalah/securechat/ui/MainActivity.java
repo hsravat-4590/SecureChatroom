@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -55,7 +54,7 @@ public class MainActivity extends Application {
     private void onNewChatButtonClicked(){
 
     }
-    public void changeContext(@NotNull AnchorPane contentAnchor){
+    public void changeContext(AnchorPane contentAnchor){
         this.contentAnchor.getChildren().addAll(contentAnchor);
     }
 
