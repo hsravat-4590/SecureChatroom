@@ -5,8 +5,10 @@ import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import com.ravat.hanzalah.securechat.GlobalContext;
+import com.ravat.hanzalah.securechat.Main;
 import com.ravat.hanzalah.securechat.net.AddressInfo;
 import com.ravat.hanzalah.securechat.net.Client;
+import com.ravat.hanzalah.securechat.net.server.ServerController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +34,7 @@ public class NewChat {
     private MainActivity.ContextSwitcher mContextSwitcher;
     private MainActivity.AppBarNameSwitcher appBarNameSwitcher;
     private boolean selfHost;
+    private volatile ServerController serverController;
     @FXML
     private void initialize(){
         chatNameField = (JFXTextField) formGridPane.getChildren().get(0);
@@ -77,11 +80,22 @@ public class NewChat {
             connectingProgressBar.setProgress(0);
             return;
         }
+        //Check if self-host is active. if so, create a chat server daemon process
+        if(selfHost){
+            final Thread serverDaemonThread = new Thread(() -> {
+                // Loopback to main w/port number
+                try {
+                     serverController = new ServerController(port);
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            });
+            serverDaemonThread.start();
+        }
         AtomicBoolean connectionSuccessful = new AtomicBoolean(true);
         Platform.runLater(() ->{
            // Try connecting here
             GlobalContext.ContextFactory.createNewContext(usernameField.getText());
-            if(!selfHost){
                 try {
                     Client newClient = new Client(new AddressInfo(hostnameField.getText(),port),chatName);
                     GlobalContext.getInstance().setChatClient(newClient);
@@ -95,14 +109,16 @@ public class NewChat {
                     try{
                         final FXMLLoader loader = new FXMLLoader();
                         loader.setLocation(getClass().getResource("/layout/ChatView.fxml"));
-                        AnchorPane content = (AnchorPane) loader.load();
+                        AnchorPane content = loader.load();
                         mContextSwitcher.changeContext(content);
-                        appBarNameSwitcher.changeAppTitle(chatName);
+                        String appBarText = chatName;
+                        if(selfHost){ appBarText = chatName + "@"+serverController.getServerAddress()+":"+portField.getText();}
+                        else{appBarText = chatName + "@"+hostnameField.getText()+":"+portField.getText();}
+                        appBarNameSwitcher.changeAppTitle(appBarText);
                     } catch (IOException ex){
                         ex.printStackTrace();
                     }
                 }
-            } //Nothing yet for server stuff :-(
             connectingProgressBar.setProgress(0);
         });
 
