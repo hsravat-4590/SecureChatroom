@@ -14,7 +14,7 @@ public class ChatRoom {
     public static volatile Map<String,ChatRoom> chatRooms;
     private volatile Map<String,Connection> connections;
     private volatile Queue<Packet.Payload> messageQueue;
-    private volatile Connection admin;
+    private final Connection admin;
 
     static{
         chatRooms = new HashMap<>();

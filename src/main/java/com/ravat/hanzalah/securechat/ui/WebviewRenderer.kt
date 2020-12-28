@@ -1,7 +1,7 @@
 package com.ravat.hanzalah.securechat.ui
 
 import java.time.format.DateTimeFormatter
-import com.github.rjeschke.txtmark.*;
+import com.github.rjeschke.txtmark.*
 import com.ravat.hanzalah.securechat.GlobalContext
 import com.ravat.hanzalah.securechat.net.ChatPayload
 import com.ravat.hanzalah.securechat.net.Client

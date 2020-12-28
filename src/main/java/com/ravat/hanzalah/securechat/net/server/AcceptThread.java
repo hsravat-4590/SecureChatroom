@@ -16,9 +16,11 @@ public class AcceptThread extends Thread {
     public AcceptThread(int listenPort) throws IOException {
         super();
         serverSocket = new ServerSocket(listenPort);
-
     }
 
+    public String getHostAddress(){
+        return serverSocket.getInetAddress().getHostAddress();
+    }
     @Override
     public void run(){
         while (ServerController.isServerRunning()) {

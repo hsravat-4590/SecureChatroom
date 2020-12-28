@@ -17,7 +17,7 @@ public class MainActivity extends Application {
     @FXML private AnchorPane contentAnchor;
     @FXML private JFXButton newChatButton;
     @FXML private AnchorPane appBar;
-    public static void main(String args[]){
+    public static void main(String[] args){
         launch(args);
     }
     @Override
@@ -25,7 +25,7 @@ public class MainActivity extends Application {
         try{
             final FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/layout/MainActivity.fxml"));
-            Parent content = (Parent) loader.load();
+            Parent content = loader.load();
             primaryStage.setResizable(false);
             mScene = new Scene(content);
             primaryStage.setScene(mScene);
@@ -38,7 +38,7 @@ public class MainActivity extends Application {
         try{
             final FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/layout/NewChat.fxml"));
-            AnchorPane content = (AnchorPane) loader.load();
+            AnchorPane content = loader.load();
             NewChat newChat = loader.getController();
             newChat.setContextSwitcher(this::changeContext);
             newChat.setAppBarNameSwitcher(this::changeAppTitle);

@@ -11,7 +11,7 @@ public interface Packet  {
     /**
      * The maximum size of a packet
      */
-    public static int MAX_PACKET_LENGTH = 4096;
+    int MAX_PACKET_LENGTH = 4096;
     /**
      * A structure which holds relevant metadata regarding the message
      */
@@ -48,9 +48,9 @@ public interface Packet  {
         /**
          * Supertype for any form of Payload
          */
-        public interface DataPayload extends Serializable{}
+        interface DataPayload extends Serializable{}
 
-        public class Payload implements Serializable{
+        class Payload implements Serializable{
             public final MetaData metaData;
 
             public final DataPayload payload;

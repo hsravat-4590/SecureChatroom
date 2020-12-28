@@ -17,10 +17,10 @@ public class Client{
     private volatile Packet.Payload lastPayload;
     private Packet.Payload lastChatPayload;
     private ZonedDateTime lastMessageTime;
-    private volatile Queue<Packet.Payload> inQueue;
-    private volatile Queue<Packet.Payload> outQueue;
-    private volatile List<ChatListener.InboundListener> inListeners;
-    private volatile List<ChatListener.OutboundListener> outListeners;
+    private final Queue<Packet.Payload> inQueue;
+    private final Queue<Packet.Payload> outQueue;
+    private final List<ChatListener.InboundListener> inListeners;
+    private final List<ChatListener.OutboundListener> outListeners;
 
     public Client(AddressInfo addressInfo,String chatName) throws IOException {
         mSocket = new Socket(addressInfo.host,addressInfo.port);

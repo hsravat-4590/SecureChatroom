@@ -15,6 +15,10 @@ public class ServerController {
         acceptThread.start();
     }
 
+    public String getServerAddress(){
+        return acceptThread.getHostAddress();
+    }
+
     public static boolean isServerRunning(){return isRunning;}
 
 

@@ -11,9 +11,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 public class Connection {
-    private volatile Socket socket;
-    private volatile ObjectOutputStream objectOutputStream;
-    private volatile ObjectInputStream objectInputStream;
+    private final Socket socket;
+    private final ObjectOutputStream objectOutputStream;
+    private final ObjectInputStream objectInputStream;
     private volatile String userName;
     public Connection(Socket socket) throws IOException{
         this.socket = socket;

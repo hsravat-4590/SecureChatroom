@@ -20,7 +20,7 @@ public final class GlobalContext implements Serializable {
      */
     public final String mUserName;
     private static final String DEFAULT_USERNAME = "DEFAULT_USER";
-    private volatile boolean isRunning;
+    private final boolean isRunning;
     private volatile Client chatClient;
 
     private GlobalContext(){
