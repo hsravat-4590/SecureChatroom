@@ -29,6 +29,8 @@ dependencies {
     compile 'org.javafxports:jfxmobile-plugin:1.0.8'
     implementation 'com.github.rjeschke:txtmark:0.13'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile group: 'net.sf.kxml', name: 'kxml2', version: '2.3.0'
+
 }
 javafx {
     version = "15.0.1"
