@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Queue;
 
 public class Client{
-    private final Socket mSocket;
-    private final ObjectInputStream objectInputStream;
-    private final ObjectOutputStream objectOutputStream;
+    protected  Socket mSocket;
+    protected  ObjectInputStream objectInputStream;
+    protected  ObjectOutputStream objectOutputStream;
     private volatile Packet.Payload lastPayload;
     private Packet.Payload lastChatPayload;
     private ZonedDateTime lastMessageTime;
@@ -34,6 +34,15 @@ public class Client{
         System.out.print("Sending Handshake...");
         objectOutputStream.writeObject(new Packet.Payload(new ChatPayload(chatName)));
         System.out.println("done");
+        inQueue = new LinkedList<>();
+        outQueue = new LinkedList<>();
+        inListeners = new LinkedList<>();
+        outListeners = new LinkedList<>();
+        outThread.start();
+        inThread.start();
+    }
+
+    protected Client(){
         inQueue = new LinkedList<>();
         outQueue = new LinkedList<>();
         inListeners = new LinkedList<>();

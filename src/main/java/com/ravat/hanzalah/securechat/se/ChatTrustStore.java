@@ -5,10 +5,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -19,7 +16,19 @@ public class ChatTrustStore {
     private final X509TrustManager jreTrustManager = getJreTrustManager();
     private final X509TrustManager mTrustManager = getMyTrustManager();
     private final X509TrustManager mergedTrustManager = createMergedTrustManager(jreTrustManager,mTrustManager);
-    public ChatTrustStore() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
+    private static ChatTrustStore instance;
+    private static final String TRUST_STORE_PATH = System.getProperty("user.home")+"/SecureChat/SecureChatTrustStore.jks";
+    public static ChatTrustStore getInstance() {
+        if (instance == null){
+            try {
+                return instance = new ChatTrustStore();
+            } catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return instance;
+    }
+    private ChatTrustStore() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
         setSystemTrustManager();
     }
 
@@ -31,7 +40,7 @@ public class ChatTrustStore {
 
     private X509TrustManager getMyTrustManager()
             throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException{
-        File mKeyFile = new File(System.getProperty("user.home")+"/SecureChat/secureChatTrustStore.jks");
+        File mKeyFile = new File(TRUST_STORE_PATH);
         try{
             KeyStore mKeyStore = KeyStore.getInstance("jks");
             if(mKeyFile.exists()) {
@@ -97,4 +106,44 @@ public class ChatTrustStore {
         SSLContext.setDefault(mSSLContext);
     }
 
+    public boolean validateServerCertificates(X509Certificate[] certificates,String authType){
+        try {
+            mergedTrustManager.checkServerTrusted(certificates,authType);
+            return true;
+        } catch (CertificateException e) {
+            e.printStackTrace();
+
+        }
+        return false;
+    }
+
+    public void addCertificateToKeystore(String alias,X509Certificate[] certificateChain){
+        File mKeyFile = new File(TRUST_STORE_PATH);
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(4096);
+            KeyPair keyPair  = keyPairGenerator.generateKeyPair();
+
+            KeyStore keyStore = KeyStore.getInstance("jks");
+            keyStore.load(new FileInputStream(mKeyFile),"password".toCharArray());
+            try{
+                javax.net.ssl.TrustManagerFactory managerFactory = javax.net.ssl.TrustManagerFactory.getInstance("X509");
+                for(X509Certificate element: certificateChain){
+                    keyStore.setCertificateEntry(element.getSubjectDN().toString(),element);
+                }
+                managerFactory.init(keyStore);
+                TrustManager[] tms = managerFactory.getTrustManagers();
+                if(tms != null){
+                    for(TrustManager tm: tms){
+                        if(tm instanceof X509TrustManager){
+
+                        }
+                    }
+                }
+            }
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

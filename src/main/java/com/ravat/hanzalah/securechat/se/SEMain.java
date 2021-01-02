@@ -15,7 +15,7 @@ public class SEMain extends Main {
 
     public static void main(String[] args){
         try {
-            new ChatTrustStore();
+            ChatTrustStore.getInstance();
         } catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
             e.printStackTrace();
         }
