@@ -1,6 +1,7 @@
 package com.ravat.hanzalah.securechat.se;
 
 import com.ravat.hanzalah.securechat.Main;
+import com.ravat.hanzalah.securechat.se.net.server.SEServerController;
 import com.ravat.hanzalah.securechat.se.trust.TrustStore;
 
 import java.io.IOException;
@@ -23,9 +24,20 @@ public class SEMain extends Main {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
-        //Set Permissive SSL
-        PermissiveSSL.disableSSLValidation();
+
         SEActive = true;
-        Main.main(args);
+        System.setProperty("javax.net.debug","ssl");
+        if(args.length == 0)
+            Main.main(args);
+        else{
+            int port = Integer.parseInt(args[0]);
+            if(port > 0){
+                try {
+                    SEServerController serverController = new SEServerController(port);
+                } catch(IOException exception){
+                    exception.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -22,41 +22,15 @@ import java.util.*;
 public class SEClient extends Client {
 
     private final SSLSession mSSLSession;
-    private final List<X509Certificate> x509Certificates;
-
+  //  private final List<X509Certificate> x509Certificates;
     public SEClient(AddressInfo addressInfo, String chatName) throws IOException {
         super();
+        System.setProperty("javax.net.ssl.trustStore", getClass().getResource("/keys/ClientKeyStore.jks").getFile());
+        //System.setProperty("javax.net.ssl.keyStorePassword", KEYSTORE_PASSWORD);
+
         super.mSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(addressInfo.host,addressInfo.port);
         mSSLSession = ((SSLSocket) mSocket).getSession();
-        X509Certificate[] mCChain = (X509Certificate[]) mSSLSession.getPeerCertificates();
-        List<X509Certificate> certificateList = new ArrayList<>(mCChain.length);
-        certificateList.addAll(Arrays.asList(mCChain));
-        x509Certificates = Collections.unmodifiableList(certificateList);
-        if(ChatTrustStore.getInstance().validateServerCertificates(x509Certificates.toArray(new X509Certificate[x509Certificates.size()]),"TLS")){
-            // This server is is gud
-        } else{
-            // Invoke the user and ask if they want to trust this user.
-            AddCertificate.CertificateAcceptor mCertAcceptor = new AddCertificate.CertificateAcceptor() {
-                @Override
-                public void onAccept() {
-                    for (X509Certificate cert: mCChain
-                         ) {
-                        TrustStore.getInstance().addCertificate(addressInfo.host.toLowerCase(Locale.ROOT),cert);
-                    }
-                }
-
-                @Override
-                public void onDecline() {
-
-                }
-
-                @Override
-                public void onJustOnce() {
-                    // Not Programmed Just Yet...
-                }
-            };
-            AddCertificate.addCertDiag(mCertAcceptor);
-        }
+        ((SSLSocket) mSocket).startHandshake();
         super.objectOutputStream = new ObjectOutputStream(mSocket.getOutputStream());
         super.objectInputStream = new ObjectInputStream(mSocket.getInputStream());
         super.startThreads();
