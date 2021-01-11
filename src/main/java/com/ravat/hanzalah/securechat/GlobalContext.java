@@ -1,6 +1,9 @@
 package com.ravat.hanzalah.securechat;
 
+import com.ravat.hanzalah.securechat.net.AddressInfo;
 import com.ravat.hanzalah.securechat.net.Client;
+import com.ravat.hanzalah.securechat.se.SEMain;
+import com.ravat.hanzalah.securechat.se.net.SEClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -77,6 +80,18 @@ public final class GlobalContext implements Serializable {
     public synchronized boolean getStatus(){return isRunning;}
 
     public void setChatClient(Client chatClient){this.chatClient = chatClient;}
+
+    /**
+     * Creates a chatClient using either SEClient (Default) or without SSL if defined
+     * @param addressInfo The address info used to instantiate a Client
+     */
+    public void createChatClient(AddressInfo addressInfo,String chatName) throws IOException {
+        if(SEMain.isSEModeRunning()){
+            this.chatClient = new SEClient(addressInfo,chatName);
+        } else{
+            this.chatClient = new Client(addressInfo, chatName);
+        }
+    }
 
     public Client getChatClient(){return chatClient;}
 }

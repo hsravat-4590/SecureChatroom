@@ -38,7 +38,7 @@ javafx {
 }
 jar {
     manifest {
-        attributes 'Main-Class': 'com.ravat.hanzalah.securechat.Main'
+        attributes 'Main-Class': 'com.ravat.hanzalah.securechat.se.SEMain'
     }
     from(configurations.runtimeClasspath.collect { entry -> zipTree(entry) }) {
         exclude 'META-INF/MANIFEST.MF'

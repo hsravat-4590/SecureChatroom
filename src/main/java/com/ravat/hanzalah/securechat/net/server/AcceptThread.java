@@ -12,15 +12,21 @@ import java.net.Socket;
 
 public class AcceptThread extends Thread {
 
-    private final ServerSocket serverSocket;
+    protected ServerSocket serverSocket;
+    protected final int port;
     public AcceptThread(int listenPort) throws IOException {
         super();
-        serverSocket = new ServerSocket(listenPort);
+        port = listenPort;
+        initialise();
     }
 
+    protected void initialise() throws IOException {
+        serverSocket = new ServerSocket(port);
+    }
     public String getHostAddress(){
         return serverSocket.getInetAddress().getHostAddress();
     }
+
     @Override
     public void run(){
         while (ServerController.isServerRunning()) {

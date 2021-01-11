@@ -5,6 +5,7 @@ import com.ravat.hanzalah.securechat.net.AddressInfo;
 import com.ravat.hanzalah.securechat.net.Client;
 import com.ravat.hanzalah.securechat.se.ChatTrustStore;
 import com.ravat.hanzalah.securechat.se.interfaces.AddCertificate;
+import com.ravat.hanzalah.securechat.se.trust.TrustStore;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -16,10 +17,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SEClient extends Client {
 
@@ -29,8 +27,6 @@ public class SEClient extends Client {
     public SEClient(AddressInfo addressInfo, String chatName) throws IOException {
         super();
         super.mSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(addressInfo.host,addressInfo.port);
-        super.objectOutputStream = new ObjectOutputStream(mSocket.getOutputStream());
-        super.objectInputStream = new ObjectInputStream(mSocket.getInputStream());
         mSSLSession = ((SSLSocket) mSocket).getSession();
         X509Certificate[] mCChain = (X509Certificate[]) mSSLSession.getPeerCertificates();
         List<X509Certificate> certificateList = new ArrayList<>(mCChain.length);
@@ -43,7 +39,10 @@ public class SEClient extends Client {
             AddCertificate.CertificateAcceptor mCertAcceptor = new AddCertificate.CertificateAcceptor() {
                 @Override
                 public void onAccept() {
-                    
+                    for (X509Certificate cert: mCChain
+                         ) {
+                        TrustStore.getInstance().addCertificate(addressInfo.host.toLowerCase(Locale.ROOT),cert);
+                    }
                 }
 
                 @Override
@@ -53,12 +52,14 @@ public class SEClient extends Client {
 
                 @Override
                 public void onJustOnce() {
-
+                    // Not Programmed Just Yet...
                 }
             };
             AddCertificate.addCertDiag(mCertAcceptor);
         }
-
+        super.objectOutputStream = new ObjectOutputStream(mSocket.getOutputStream());
+        super.objectInputStream = new ObjectInputStream(mSocket.getInputStream());
+        super.startThreads();
     }
 
 }

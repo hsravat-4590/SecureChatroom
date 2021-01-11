@@ -47,6 +47,9 @@ public class Client{
         outQueue = new LinkedList<>();
         inListeners = new LinkedList<>();
         outListeners = new LinkedList<>();
+    }
+
+    protected void startThreads(){
         outThread.start();
         inThread.start();
     }

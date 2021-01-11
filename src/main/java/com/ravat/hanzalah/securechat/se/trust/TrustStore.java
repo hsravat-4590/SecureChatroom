@@ -1,34 +1,37 @@
-package com.ravat.hanzalah.securechat.se;
+package com.ravat.hanzalah.securechat.se.trust;
+
+import com.ravat.hanzalah.securechat.se.ChatTrustStore;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
-import java.security.*;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-/**
- * Loads and sets the correct truststore for this application.
- */
-public class ChatTrustStore {
+public class TrustStore {
     private final X509TrustManager jreTrustManager = getJreTrustManager();
     private final X509TrustManager mTrustManager = getMyTrustManager();
     private final X509TrustManager mergedTrustManager = createMergedTrustManager(jreTrustManager,mTrustManager);
-    private static ChatTrustStore instance;
+    private static TrustStore instance;
     private static final String TRUST_STORE_PATH = System.getProperty("user.home")+"/SecureChat/SecureChatTrustStore.jks";
-    public static ChatTrustStore getInstance() {
+    private static final char[] PASSWORD = "password".toCharArray();
+    public static TrustStore getInstance() {
         if (instance == null){
             try {
-                return instance = new ChatTrustStore();
-            } catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
+                return instance = new TrustStore();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return instance;
     }
-    private ChatTrustStore() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
+    private TrustStore() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
         setSystemTrustManager();
     }
 
@@ -117,32 +120,25 @@ public class ChatTrustStore {
         return false;
     }
 
-    public void addCertificateToKeystore(String alias,X509Certificate[] certificateChain){
-        File mKeyFile = new File(TRUST_STORE_PATH);
-        try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(4096);
-            KeyPair keyPair  = keyPairGenerator.generateKeyPair();
-
-            KeyStore keyStore = KeyStore.getInstance("jks");
-            keyStore.load(new FileInputStream(mKeyFile),"password".toCharArray());
-                javax.net.ssl.TrustManagerFactory managerFactory = javax.net.ssl.TrustManagerFactory.getInstance("X509");
-                for(X509Certificate element: certificateChain){
-                    keyStore.setCertificateEntry(element.getSubjectDN().toString(),element);
-                }
-                managerFactory.init(keyStore);
-                TrustManager[] tms = managerFactory.getTrustManagers();
-                if(tms != null){
-                    for(TrustManager tm: tms){
-                        if(tm instanceof X509TrustManager){
-
-                        }
-                    }
-                }
-
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            e.printStackTrace();
+    /**
+     * Adds a provided certificate to the TrustStore
+     * @param alias
+     * @param cert
+     */
+    public void addCertificate(String alias,X509Certificate cert){
+        // Assume that keystore exists already due to the application flow
+        try{
+            KeyStore mKeystore = KeyStore.getInstance("jks");
+            File trustFile = new File(TRUST_STORE_PATH);
+            FileInputStream fileInputStream = new FileInputStream(trustFile);
+            mKeystore.load(fileInputStream,PASSWORD);
+            fileInputStream.close();
+            mKeystore.setCertificateEntry(alias,cert);
+            FileOutputStream fileOutputStream = new FileOutputStream(trustFile);
+            mKeystore.store(fileOutputStream,PASSWORD);
+            fileOutputStream.close();
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
-
     }
 }

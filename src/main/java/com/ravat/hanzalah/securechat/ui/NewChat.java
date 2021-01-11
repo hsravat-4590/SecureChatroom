@@ -9,6 +9,8 @@ import com.ravat.hanzalah.securechat.Main;
 import com.ravat.hanzalah.securechat.net.AddressInfo;
 import com.ravat.hanzalah.securechat.net.Client;
 import com.ravat.hanzalah.securechat.net.server.ServerController;
+import com.ravat.hanzalah.securechat.se.SEMain;
+import com.ravat.hanzalah.securechat.se.net.server.SEServerController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -85,7 +87,11 @@ public class NewChat {
             final Thread serverDaemonThread = new Thread(() -> {
                 // Loopback to main w/port number
                 try {
-                     serverController = new ServerController(port);
+                    if(SEMain.isSEModeRunning()){
+                        serverController = new SEServerController(port);
+                    } else {
+                        serverController = new ServerController(port);
+                    }
                 } catch (IOException exception) {
                     exception.printStackTrace();
                 }
@@ -97,11 +103,11 @@ public class NewChat {
            // Try connecting here
             GlobalContext.ContextFactory.createNewContext(usernameField.getText());
                 try {
-                    Client newClient = new Client(new AddressInfo(hostnameField.getText(),port),chatName);
-                    GlobalContext.getInstance().setChatClient(newClient);
+                    GlobalContext.getInstance().createChatClient(new AddressInfo(hostnameField.getText(),port),chatName);
                     System.out.println("Set the ChatClient in the Global Context");
                 } catch (IOException exception) {
                     errorLabel.setText("ERROR: Unable to connect to host on the specified port");
+                    exception.printStackTrace();
                     connectionSuccessful.set(false);
                 }
                 if(connectionSuccessful.get()){

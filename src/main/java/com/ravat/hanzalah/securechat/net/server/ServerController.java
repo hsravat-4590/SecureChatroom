@@ -5,14 +5,19 @@ import java.io.IOException;
 
 public class ServerController {
 
-    private final AcceptThread acceptThread;
-
+    protected AcceptThread acceptThread;
+    protected final int port;
     private static volatile boolean isRunning = false;
 
     public ServerController(int listenPort) throws IOException {
-        this.acceptThread = new AcceptThread(listenPort);
+        this.port = listenPort;
+        initialise();
         isRunning = true;
         acceptThread.start();
+    }
+
+    protected void initialise() throws IOException {
+        this.acceptThread = new AcceptThread(port);
     }
 
     public String getServerAddress(){
