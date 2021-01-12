@@ -13,8 +13,7 @@ public class SEAcceptThread extends AcceptThread {
 
     public SEAcceptThread(int listenPort) throws IOException {
         super(listenPort);
-        System.setProperty("javax.net.ssl.keyStore", getClass().getResource("/keys/ServerKeyStore.jks").getFile());
-        System.setProperty("javax.net.ssl.keyStorePassword", "password");
+
     }
 
     @Override

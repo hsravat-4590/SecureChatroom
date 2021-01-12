@@ -6,7 +6,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 /**
- * When activated, SE mode switches from Enforcing to Permissive which means that SSL Certs are no longer validated
+ * When activated, SE mode switches from Enforcing to Permissive which means that SSL Certs are no longer validated. FOR DEBUGGING AND TESTING ONLY!
  */
 public class PermissiveSSL {
 

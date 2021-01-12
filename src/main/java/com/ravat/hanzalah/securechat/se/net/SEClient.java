@@ -25,12 +25,10 @@ public class SEClient extends Client {
   //  private final List<X509Certificate> x509Certificates;
     public SEClient(AddressInfo addressInfo, String chatName) throws IOException {
         super();
-        System.setProperty("javax.net.ssl.trustStore", getClass().getResource("/keys/ClientKeyStore.jks").getFile());
         //System.setProperty("javax.net.ssl.keyStorePassword", KEYSTORE_PASSWORD);
-
         super.mSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(addressInfo.host,addressInfo.port);
         mSSLSession = ((SSLSocket) mSocket).getSession();
-        ((SSLSocket) mSocket).startHandshake();
+        //((SSLSocket) mSocket).startHandshake();
         super.objectOutputStream = new ObjectOutputStream(mSocket.getOutputStream());
         super.objectInputStream = new ObjectInputStream(mSocket.getInputStream());
         super.startThreads();

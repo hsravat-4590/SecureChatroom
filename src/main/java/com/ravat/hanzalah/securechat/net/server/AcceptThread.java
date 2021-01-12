@@ -4,6 +4,8 @@ import com.ravat.hanzalah.securechat.net.ACKPayload;
 import com.ravat.hanzalah.securechat.net.ChatPayload;
 import com.ravat.hanzalah.securechat.net.Packet;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,6 +35,10 @@ public class AcceptThread extends Thread {
             try {
                 System.out.println("Waiting for Clients...");
                 Socket inSocket = serverSocket.accept();
+                if(inSocket instanceof SSLSocket){
+                    System.out.println("The Socket is an instance of an SSL Socket");
+                    ((SSLSocket) inSocket).startHandshake();
+                }
                 System.out.println("Client Found: " + inSocket.getRemoteSocketAddress());
                 ObjectOutputStream outputStream = new ObjectOutputStream(inSocket.getOutputStream());
                 ObjectInputStream inputStream = new ObjectInputStream(inSocket.getInputStream());
