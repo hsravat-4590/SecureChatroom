@@ -50,7 +50,7 @@ public class AcceptThread extends Thread {
                 outputStream.writeObject(new Packet.Payload(new ACKPayload())); //Send an ACK Payload to acknowledge the connection
                 // Assume that this client has sent their chatroom within the handshake packet
                 if (handshakePacket.payload instanceof ChatPayload) {
-                    String chatName = ((ChatPayload) handshakePacket.payload).chatMessage;
+                    String chatName = ((ChatPayload) handshakePacket.payload).getChatMessage();
                     ChatRoom.createOrJoin(chatName, usr, new Connection(inSocket, outputStream, inputStream));
                 }
             } catch (IOException | ClassNotFoundException exception) {

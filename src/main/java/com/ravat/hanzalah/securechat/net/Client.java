@@ -54,14 +54,17 @@ public class Client{
         inThread.start();
     }
 
+    protected void addToSendQueue(Packet.Payload message){
+        setLastChatPayload(message);
+        lastPayload = message;
+        outQueue.add(message);
+        lastMessageTime = message.metaData.time;
+
+    }
     public void sendMessage(String message){
         System.out.println("Sending a Message!");
         Packet.Payload sendPayload = new Packet.Payload(new ChatPayload(message));
-        setLastChatPayload(sendPayload);
-        lastPayload = sendPayload;
-        outQueue.add(sendPayload);
-        lastMessageTime = sendPayload.metaData.time;
-
+        addToSendQueue(sendPayload);
     }
     private void setLastChatPayload(Packet.Payload payload) {
         if (payload.payload instanceof ChatPayload) {
