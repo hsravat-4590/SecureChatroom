@@ -2,7 +2,9 @@ package com.ravat.hanzalah.securechat.se.net;
 
 import com.ravat.hanzalah.securechat.GlobalContext;
 import com.ravat.hanzalah.securechat.net.AddressInfo;
+import com.ravat.hanzalah.securechat.net.ChatPayload;
 import com.ravat.hanzalah.securechat.net.Client;
+import com.ravat.hanzalah.securechat.net.Packet;
 import com.ravat.hanzalah.securechat.se.ChatTrustStore;
 import com.ravat.hanzalah.securechat.se.interfaces.AddCertificate;
 import com.ravat.hanzalah.securechat.se.trust.TrustStore;
@@ -26,11 +28,14 @@ public class SEClient extends Client {
     public SEClient(AddressInfo addressInfo, String chatName) throws IOException {
         super();
         //System.setProperty("javax.net.ssl.keyStorePassword", KEYSTORE_PASSWORD);
-        super.mSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(addressInfo.host,addressInfo.port);
+        super.mSocket = SSLSocketFactory.getDefault().createSocket(addressInfo.host,addressInfo.port);
         mSSLSession = ((SSLSocket) mSocket).getSession();
         //((SSLSocket) mSocket).startHandshake();
         super.objectOutputStream = new ObjectOutputStream(mSocket.getOutputStream());
         super.objectInputStream = new ObjectInputStream(mSocket.getInputStream());
+        System.out.print("Sending Handshake...");
+        objectOutputStream.writeObject(new Packet.Payload(new ChatPayload(chatName)));
+        System.out.println("done");
         super.startThreads();
     }
 
