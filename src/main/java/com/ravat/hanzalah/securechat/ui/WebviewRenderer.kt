@@ -17,6 +17,8 @@ class WebviewRenderer(chatClient: Client) {
     private val HTMLHeaders: String = "<head>\n" +
             "    <title>TestWebpage</title>\n" +
             "    <link rel=\"stylesheet\" href=\"webview.css\">\n" +
+            "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">\n" +
+            "<link href=\"https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap\" rel=\"stylesheet\">" +
             "</head>"
     private val client: Client = chatClient
     init{
