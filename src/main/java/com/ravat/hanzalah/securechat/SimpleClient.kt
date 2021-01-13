@@ -8,7 +8,7 @@ import javax.net.ssl.SSLSocketFactory
 
 fun main(args: Array<String>) {
     GlobalContext.ContextFactory.createNewContext("Dave")
-    System.setProperty("javax.net.ssl.trustStore", {}.javaClass.getResource("/keys/ClientKeyStore.jks").getFile())
+    System.setProperty("javax.net.ssl.trustStore", {}.javaClass.getResource("/keys/ClientKeyStore.jks").file)
     val host = "localhost"
     val port = 2828
     val socket = SSLSocketFactory.getDefault().createSocket(host,port)
