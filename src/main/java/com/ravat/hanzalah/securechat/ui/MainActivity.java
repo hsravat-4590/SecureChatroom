@@ -33,8 +33,8 @@ public class MainActivity extends Application {
             primaryStage.setResizable(false);
             mScene = new Scene(content);
             primaryStage.setScene(mScene);
-            primaryStage.setWidth(750);
-            primaryStage.setHeight(690);
+            //primaryStage.setWidth(750);
+            //primaryStage.setHeight(690);
             primaryStage.show();
             System.out.println(primaryStage.getWidth() + "+ " + primaryStage.getHeight());
 
