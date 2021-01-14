@@ -4,7 +4,10 @@ import com.ravat.hanzalah.securechat.net.AddressInfo;
 import com.ravat.hanzalah.securechat.net.ChatPayload;
 import com.ravat.hanzalah.securechat.net.Client;
 import com.ravat.hanzalah.securechat.net.Packet;
+import com.ravat.hanzalah.securechat.se.SESessionContext;
+import com.ravat.hanzalah.securechat.se.SessionInfo;
 import com.ravat.hanzalah.securechat.se.crypto.SEChatPayload;
+import com.ravat.hanzalah.securechat.se.net.payloads.SEHandshakePayload;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,9 +28,11 @@ public class SEClient extends Client {
         super.objectOutputStream = new ObjectOutputStream(mSocket.getOutputStream());
         super.objectInputStream = new ObjectInputStream(mSocket.getInputStream());
         System.out.print("Sending Handshake...");
-        objectOutputStream.writeObject(new Packet.Payload(new ChatPayload(chatName)));
+        // SE Sessions will be sending out Public Keys in their Handshakes rather than a simple chatname.
+        objectOutputStream.writeObject(new Packet.Payload(new SEHandshakePayload(chatName)));
         // Send Public key to the server
         System.out.println("done");
+        SessionInfo.printSessionInfo(mSSLSession);
         super.startThreads();
     }
 
