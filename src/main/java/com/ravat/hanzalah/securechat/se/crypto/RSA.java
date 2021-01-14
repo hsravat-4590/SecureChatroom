@@ -13,7 +13,7 @@ public class RSA {
     public final PublicKey publicKey;
     private static RSA instance;
 
-    public RSA getInstance(){
+    public static RSA getInstance(){
         if(instance == null){
             try {
                 instance = new RSA();
