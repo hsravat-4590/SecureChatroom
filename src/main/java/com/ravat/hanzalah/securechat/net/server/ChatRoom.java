@@ -5,10 +5,7 @@ import com.ravat.hanzalah.securechat.net.Packet;
 
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class ChatRoom {
     public static volatile Map<String,ChatRoom> chatRooms;
@@ -53,36 +50,42 @@ public class ChatRoom {
     private final Thread readThread = new Thread(() -> {
         while(ServerController.isServerRunning()){
             //System.out.println("Reading message...");
-            for(Map.Entry<String,Connection> entry: connections.entrySet()) {
-                try {
-                    Packet.Payload inMessage = entry.getValue().readPayload();
-                    if (inMessage == null) {
+            try {
+                for (Map.Entry<String, Connection> entry : connections.entrySet()) {
+                    try {
+                        Packet.Payload inMessage = entry.getValue().readPayload();
+                        if (inMessage == null) {
+                            continue;
+                        }
+                        if ((!(inMessage.payload instanceof ACKPayload))) {
+                            messageQueue.add(inMessage);
+                        }
+                    } catch (SocketTimeoutException exception) {
                         continue;
+                    } catch (SocketException exception) {
+                        //The user has been disconnected
+                        System.out.println("The user has been disconnected!!!");
+                        removeUser(entry.getKey());
                     }
-                    if ((!(inMessage.payload instanceof ACKPayload))) {
-                        messageQueue.add(inMessage);
-                    }
-                } catch(SocketTimeoutException exception){
-                    continue;
-                } catch(SocketException exception){
-                    //The user has been disconnected
-                    System.out.println("The user has been disconnected!!!");
-                    removeUser(entry.getKey());
                 }
+            } catch (ConcurrentModificationException concurrentModificationException){
+                // Do nothing and continue...
             }
         }
     });
     private final Thread writeThread = new Thread(() ->{
         while (ServerController.isServerRunning()){
-            if(messageQueue.size() > 0) {
-                //System.out.println("Sending Messages");
-                //System.out.println("Number of elements in the queue: " + messageQueue.size() );
-                Packet.Payload outPayload = messageQueue.remove();
-                for (Map.Entry<String, Connection> entry : connections.entrySet()) {
-                    //System.out.println("Sending Message to user: " + entry.getKey());
-                    entry.getValue().sendPacket(outPayload);
+            try {
+                if (messageQueue.size() > 0) {
+                    //System.out.println("Sending Messages");
+                    //System.out.println("Number of elements in the queue: " + messageQueue.size() );
+                    Packet.Payload outPayload = messageQueue.remove();
+                    for (Map.Entry<String, Connection> entry : connections.entrySet()) {
+                        //System.out.println("Sending Message to user: " + entry.getKey());
+                        entry.getValue().sendPacket(outPayload);
+                    }
                 }
-            }
+            }catch (ConcurrentModificationException concurrentModificationException){}
         }
     });
 
