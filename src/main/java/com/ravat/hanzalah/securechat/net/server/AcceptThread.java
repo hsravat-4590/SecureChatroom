@@ -35,10 +35,6 @@ public class AcceptThread extends Thread {
             try {
                 System.out.println("Waiting for Clients...");
                 Socket inSocket = serverSocket.accept();
-                if(inSocket instanceof SSLSocket){
-                    System.out.println("The Socket is an instance of an SSL Socket");
-                    ((SSLSocket) inSocket).startHandshake();
-                }
                 System.out.println("Client Found: " + inSocket.getRemoteSocketAddress());
                 ObjectOutputStream outputStream = new ObjectOutputStream(inSocket.getOutputStream());
                 ObjectInputStream inputStream = new ObjectInputStream(inSocket.getInputStream());
