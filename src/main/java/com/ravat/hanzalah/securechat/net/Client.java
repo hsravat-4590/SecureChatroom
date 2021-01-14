@@ -66,6 +66,11 @@ public class Client{
         Packet.Payload sendPayload = new Packet.Payload(new ChatPayload(message));
         addToSendQueue(sendPayload);
     }
+
+    protected void sendMessage(Packet.DataPayload payload){
+        System.out.println("Sending a Message");
+        addToSendQueue(new Packet.Payload(payload));
+    }
     private void setLastChatPayload(Packet.Payload payload) {
         if (payload.payload instanceof ChatPayload) {
             lastChatPayload = payload;
@@ -79,6 +84,9 @@ public class Client{
         return lastPayload;
     }
 
+    protected void handlePayload(Packet.DataPayload payload){
+        // Do Nothing here
+    }
     private final Thread inThread = new Thread() {
         @Override
         public void run() {
@@ -92,6 +100,7 @@ public class Client{
                         if (inPayload != null) {
                             System.out.println("This message was sent by: " + inPayload.metaData.author);
                             inQueue.add(inPayload);
+                            handlePayload(inPayload.payload);
                             System.out.println("Added a message to the inQueue");
                             for (ChatListener.InboundListener inListener :
                                     inListeners) {

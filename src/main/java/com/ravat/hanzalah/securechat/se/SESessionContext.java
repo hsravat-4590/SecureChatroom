@@ -11,6 +11,7 @@ public class SESessionContext {
 
     private SESessionContext(){}
     private AES aesFaclilitator;
+    private boolean amIAdmin;
 
     private static SESessionContext instance;
 
@@ -20,12 +21,17 @@ public class SESessionContext {
         return instance;
     }
 
+    /**
+     * Sets the AES Facilitator and assums the user is admin
+     */
     public void createNewAESFacilitator(){
         aesFaclilitator = new AES();
+        amIAdmin = true;
     }
 
     public void setAesFaclilitator(SecretKey key){
         aesFaclilitator = new AES(key);
+        amIAdmin = false;
     }
 
     public AES getAesFaclilitator() throws InstanceNotFoundException{
@@ -36,6 +42,7 @@ public class SESessionContext {
         }
     }
 
+    public boolean isAdmin(){return amIAdmin;}
     public class InstanceNotFoundException extends NullPointerException{
         InstanceNotFoundException(String instanceName){
             super("An Instance for: "+ instanceName + " has not been set in the SESessionContext");

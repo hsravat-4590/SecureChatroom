@@ -3,6 +3,7 @@ package com.ravat.hanzalah.securechat.se;
 import com.ravat.hanzalah.securechat.Main;
 import com.ravat.hanzalah.securechat.se.net.server.SEServerController;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -17,7 +18,15 @@ public class SEMain extends Main {
         System.setProperty("javax.net.ssl.keyStore", SEMain.class.getResource("/keys/ServerKeyStore.jks").getFile());
         System.setProperty("javax.net.ssl.keyStorePassword", "password");
         System.setProperty("javax.net.ssl.trustStore", SEMain.class.getResource("/keys/ClientKeyStore.jks").getFile());
-       // System.setProperty("javax.net.debug","ssl");
+        System.setProperty("javax.net.debug","ssl");
+        File serverKS = new File(SEMain.class.getResource("/keys/ServerKeyStore.jks").getFile());
+        if(serverKS.exists()){
+            System.out.println("Server KeyStore Exists");
+        }
+        String keyStoreProp = System.getProperty("javax.net.ssl.keyStore");
+        if(keyStoreProp != null){
+            System.out.println("Got it: " + keyStoreProp);
+        }
         SEActive = true;
         if(args.length == 0)
             Main.main(args);
