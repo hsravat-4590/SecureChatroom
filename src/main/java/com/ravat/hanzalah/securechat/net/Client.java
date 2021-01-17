@@ -131,12 +131,12 @@ public class Client{
             while (GlobalContext.getInstance().getStatus()) {
                 if(outQueue.size() > 0) {
                     try {
-                        Packet.Payload toSend = outQueue.remove();
+                        Packet.Payload toSend = outQueue.poll();
                         if (toSend != null) {
                             // We have to send some messages!
                             System.out.print("Sending...");
                             objectOutputStream.writeObject(toSend);
-                            System.out.println("Message Sent Dud");
+                            System.out.println("Message Sent");
                             for (ChatListener.OutboundListener outListener :
                                     outListeners) {
                                 System.out.println("Sending message sent broadcast");

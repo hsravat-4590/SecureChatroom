@@ -3,10 +3,7 @@ package com.ravat.hanzalah.securechat.se.net.server;
 import com.ravat.hanzalah.securechat.net.ACKPayload;
 import com.ravat.hanzalah.securechat.net.ChatPayload;
 import com.ravat.hanzalah.securechat.net.Packet;
-import com.ravat.hanzalah.securechat.net.server.AcceptThread;
-import com.ravat.hanzalah.securechat.net.server.ChatRoom;
-import com.ravat.hanzalah.securechat.net.server.Connection;
-import com.ravat.hanzalah.securechat.net.server.ServerController;
+import com.ravat.hanzalah.securechat.net.server.*;
 import com.ravat.hanzalah.securechat.se.net.payloads.SEHandshakePayload;
 import com.ravat.hanzalah.securechat.se.net.payloads.SEServerHandshakePayload;
 
@@ -60,11 +57,9 @@ public class SEAcceptThread extends AcceptThread {
                 // Assume that this client has sent their chatroom within the handshake packet
                 if (handshakePacket.payload instanceof ChatPayload) {
                     String chatName = ((ChatPayload) handshakePacket.payload).getChatMessage();
-                    int addStatus = ChatRoom.createOrJoin(chatName, usr, new SEConnection(inSocket, outputStream, inputStream,userPubKey));
-                    outputStream.writeObject(new Packet.Payload(new SEServerHandshakePayload(addStatus))); //Send an ACK Payload to acknowledge the connection
-                    if(addStatus == -1){
-                        inSocket.close();
-                    }
+                    SEConnection connection = new SEConnection(inSocket, outputStream, inputStream,userPubKey);
+                    int addStatus = ChatRoom.createOrJoin(chatName, usr, connection);
+                    connection.setMyStatus(addStatus);
                 }
             } catch (IOException | ClassNotFoundException exception) {
                 exception.printStackTrace();

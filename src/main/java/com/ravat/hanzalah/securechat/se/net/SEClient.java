@@ -37,25 +37,43 @@ public class SEClient extends Client {
         objectOutputStream.writeObject(new Packet.Payload(new SEHandshakePayload(chatName)));
         // Send Public key to the server
         try {
-            SEServerHandshakePayload reply = (SEServerHandshakePayload) objectInputStream.readObject();
-            if(reply.getStatus() == 1){
-                SESessionContext.getInstance().createNewAESFacilitator();
-            }else if (reply.getStatus() == -1){
-                mSocket.close();
-            } else {
-                // Otherwise we need to wait for the AES Facilitator to be sent from the admin
-                objectOutputStream.writeObject(new Packet.Payload(new ACKPayload()));
-                while (true) {
-                    Packet.DataPayload inPayload = (Packet.DataPayload) objectInputStream.readObject();
+            Object replyObject = objectInputStream.readObject();
+            Packet.Payload object = (Packet.Payload) replyObject;
+            boolean aesSet = false;
+            System.out.println("Got a: " + object.payload.getClass().getName());
+            if (object.payload instanceof SEServerHandshakePayload) {
+                System.out.println("Got a SEServerHandshake");
+                SEServerHandshakePayload reply = (SEServerHandshakePayload) object.payload;
+                if (reply.getStatus() == 1) {
+                    System.out.println("Got a reply from the server... I am the Admin!");
+                    SESessionContext.getInstance().createNewAESFacilitator();
+                } else if (reply.getStatus() == -1) {
+                    System.out.println("Got a reply from the server... I cannot join the chat!");
+                    mSocket.close();
+                } else {
+                    System.out.println("Got a reply from the server... I need to get the shared key before I can chat!");
+                    // Otherwise we need to
+                    // wait for the AES Facilitator to be sent from the admin
                     objectOutputStream.writeObject(new Packet.Payload(new ACKPayload()));
-                    if (inPayload instanceof KeySharePayload) {
-                        SESessionContext.getInstance().setAesFaclilitator((SecretKey) RSA.getInstance().decrypt(((KeySharePayload) inPayload).getSecretKey()));
-                        break;
+                    waitForAdminAES: while (true) {
+                        Packet.Payload inPayload = (Packet.Payload) objectInputStream.readObject();
+                        objectOutputStream.writeObject(new Packet.Payload(new ACKPayload()));
+                        if (inPayload.payload instanceof KeySharePayload) {
+                            SESessionContext.getInstance().setAesFaclilitator((SecretKey) RSA.getInstance().decrypt(((KeySharePayload) inPayload.payload).getSecretKey()));
+                            break;
+                        }
+                        Thread.sleep(100);
                     }
-
+                }
+                aesSet = true;
+            } else{
+                if(object.payload instanceof SEServerChatPayload){
+                   // System.out.println(((SEServerChatPayload) object.payload).userName);
+                } else{
+                   // System.out.println("Got a: " + object.payload.getClass().getName());
                 }
             }
-        } catch (ClassNotFoundException e) {
+        } catch(ClassNotFoundException | InterruptedException e){
             e.printStackTrace();
         }
         System.out.println("done");
@@ -66,10 +84,12 @@ public class SEClient extends Client {
     @Override
     protected void handlePayload(Packet.DataPayload payload){
         if(payload instanceof SEServerChatPayload && SESessionContext.getInstance().isAdmin() ){
+            System.out.println("I'm the Admin... Sending the shared key to the user");
             if(((SEServerChatPayload) payload).messageTypes.equals(ServerChatPayload.MessageTypes.NEW_USER)) {
                 PublicKey publicKey = ((SEServerChatPayload) payload).getPublicKey();
                 SealedObject sealedObject = RSA.getInstance().encrypt(SESessionContext.getInstance().getAesFaclilitator().getKey(),publicKey);
                 sendMessage(new KeySharePayload(sealedObject));
+                System.out.println("Shared Key added to send list");
             }
         }
     }

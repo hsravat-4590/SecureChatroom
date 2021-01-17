@@ -1,6 +1,8 @@
 package com.ravat.hanzalah.securechat.net.server;
 
 
+import com.ravat.hanzalah.securechat.se.net.server.SEChatRoom;
+
 import java.io.IOException;
 
 public class ServerController {
@@ -13,6 +15,7 @@ public class ServerController {
         this.port = listenPort;
         initialise();
         isRunning = true;
+        new SEChatRoom();
         acceptThread.start();
     }
 
