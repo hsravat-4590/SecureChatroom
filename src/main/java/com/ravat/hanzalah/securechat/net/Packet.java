@@ -21,7 +21,7 @@ public interface Packet  {
          */
         public final String author;
         /**
-         * The Time of the message in UTC Format. The messages are converted into local time when parsed by the reciever
+         * The Time of the message in UTC Format. The messages are converted into local time when parsed by the reciever to ensure that the chat works smoothly across time-zones
          */
         public final ZonedDateTime time;
         /**
@@ -32,7 +32,7 @@ public interface Packet  {
         /**
          * Constructs the payload metadata
          *
-         * @param payload The payload
+         * @param payload The payload you wish to get the metadata for
          */
         public MetaData(DataPayload payload) {
             time = ZonedDateTime.now(ZoneId.of("UTC"));
@@ -50,7 +50,10 @@ public interface Packet  {
          */
         interface DataPayload extends Serializable{}
 
-        class Payload implements Serializable{
+    /**
+     * Main Payload class which is used to send DataPayloads over the network with metadata.
+     */
+    class Payload implements Serializable{
             public final MetaData metaData;
 
             public final DataPayload payload;

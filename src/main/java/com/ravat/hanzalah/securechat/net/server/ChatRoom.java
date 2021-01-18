@@ -10,6 +10,9 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A ChatRoom is a class which monitors all chatrooms the server is hosting and also provides the read and write threads for each chatroom. The chatroom also hosts the messageQueue and all connections in a chatroom
+ */
 public class ChatRoom{
     public static volatile Map<String,ChatRoom> chatRooms;
     private volatile Map<String,Connection> connections;
@@ -18,6 +21,9 @@ public class ChatRoom{
     private final Connection admin;
     private static volatile ChatRoomDeriver mDeriver;
 
+    /**
+     * Initialises the HashMap which is used to hold all ChatRoom instances.
+     */
     static{
         chatRooms = new HashMap<>();
     }
@@ -159,6 +165,11 @@ public class ChatRoom{
         return messageQueue.poll();
     }
 
+    /**
+     * Set's the Deriver for the ChatRoom. This will only work if a deriver hasn't already been set OR if a chatroom hasn't been constructed yet.
+     * @param deriver The dervier class
+     * @return True if a the deriver is set, false if it could not be set.
+     */
     public static boolean setDeriver(ChatRoomDeriver deriver){
         if(mDeriver != null){
             return false;
@@ -170,6 +181,9 @@ public class ChatRoom{
         }
     }
 
+    /**
+     * The Default Deriver class. This class will be used if a custom deriver is not set.
+     */
     static final class DefaultDeriver extends ChatRoomDeriver {
         public DefaultDeriver() throws ChatRoomDeriverSetException {
             super();

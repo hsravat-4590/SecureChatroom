@@ -30,6 +30,8 @@ dependencies {
     implementation 'com.github.rjeschke:txtmark:0.13'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile group: 'net.sf.kxml', name: 'kxml2', version: '2.3.0'
+    compile "com.beust:jcommander:1.78"
+
 
 }
 javafx {

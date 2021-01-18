@@ -7,4 +7,5 @@ module com.ravat.hanzalah.securechat{
     requires kotlin.stdlib;
     requires txtmark;
     requires kxml2;
+    requires jcommander;
 }

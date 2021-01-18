@@ -17,10 +17,14 @@ import java.net.Socket;
 import java.security.PublicKey;
 
 /**
- * Runs on top of AcceptThread but with SSLServerSockets instead of unsecured sockets and establishes SSL Sockets for inbound connections
+ * Runs on top of AcceptThread but with SSLServerSockets instead of unsecured sockets and establishes SSL Sockets for inbound connections and prepares the connection for End-to-End Encryption
  */
 public class SEAcceptThread extends AcceptThread {
-
+    /**
+     * Constructs an SEAcceptThread to listen on the specified port.
+     * @param listenPort
+     * @throws IOException
+     */
     public SEAcceptThread(int listenPort) throws IOException {
         super(listenPort);
     }
@@ -30,7 +34,7 @@ public class SEAcceptThread extends AcceptThread {
         serverSocket = SSLServerSocketFactory.getDefault().createServerSocket(port);
         ((SSLServerSocket) serverSocket).setEnabledProtocols(new String[]{"SSLv3","TLSv1"});
     }
-
+    
     @Override
     public void run(){
         while (ServerController.isServerRunning()) {
