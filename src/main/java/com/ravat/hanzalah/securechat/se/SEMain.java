@@ -29,6 +29,9 @@ public class SEMain extends Main {
     @Parameter(names = {"-debugssl","-ssldebug"}, description = "Enable SSL verbose output")
     private boolean sslDebug = false;
 
+    @Parameter(names = {"-noSE","-seoff"}, description = "Switches to non-SE mode")
+    private boolean noSE = false;
+
     public static void main(String[] args){
         SEMain main = new SEMain();
         JCommander commander = JCommander.newBuilder()
@@ -37,6 +40,10 @@ public class SEMain extends Main {
         commander.parse(args);
         if(main.printUsage){
             commander.usage();
+            System.exit(0);
+        }
+        if(main.noSE){
+            Main.main(args);
         }
         if(main.keyStore.equals(":-)")) {
             System.out.println("Using default keystore");
