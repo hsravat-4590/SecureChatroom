@@ -14,7 +14,8 @@ plugins {
 }
 
 group 'com.ravat.hanzalah'
-version '1.0.0'
+application.mainClassName 'com.ravat.hanzalah.securechat.se.SEMain'
+version '3.0.0'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 sourceCompatibility = 14
