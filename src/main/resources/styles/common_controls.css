@@ -1,3 +1,13 @@
+/* 
+ *  This is the default license template.
+ *  
+ *  File: common_controls.css
+ *  Author: hanza
+ *  Copyright (c) 2020-2021 hanza
+ *  
+ *  To edit this license information: Press Ctrl+Shift+P and press 'Create new License Template...'.
+ */
+
 .button{
     -fx-font-family: 'Roboto', sans-serif;
     -fx-font-weight:bold;
