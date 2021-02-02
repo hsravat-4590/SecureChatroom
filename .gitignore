@@ -8,3 +8,4 @@ build/classes/
 .compiler.options
 
 *.class
+bin/
