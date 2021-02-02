@@ -14,7 +14,8 @@ plugins {
 }
 
 group 'com.ravat.hanzalah'
-version '1.0.0'
+application.mainClassName 'com.ravat.hanzalah.securechat.se.SEMain'
+version '3.0.0'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 sourceCompatibility = 14
@@ -30,6 +31,8 @@ dependencies {
     implementation 'com.github.rjeschke:txtmark:0.13'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile group: 'net.sf.kxml', name: 'kxml2', version: '2.3.0'
+    compile "com.beust:jcommander:1.78"
+
 
 }
 javafx {
@@ -38,7 +41,7 @@ javafx {
 }
 jar {
     manifest {
-        attributes 'Main-Class': 'com.ravat.hanzalah.securechat.Main'
+        attributes 'Main-Class': 'com.ravat.hanzalah.securechat.se.SEMain'
     }
     from(configurations.runtimeClasspath.collect { entry -> zipTree(entry) }) {
         exclude 'META-INF/MANIFEST.MF'
