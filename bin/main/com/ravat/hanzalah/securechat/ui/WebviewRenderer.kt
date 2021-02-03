@@ -24,6 +24,8 @@
  *   */
  */
 
+*/
+
 package com.ravat.hanzalah.securechat.ui
 
 import java.time.format.DateTimeFormatter

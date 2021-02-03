@@ -2,8 +2,13 @@ rem^ ||(
     This is the default license template.
     
     File: gradlew.bat
-    Author: hanza
-    Copyright (c) 2020-2021 hanza
+    Author: hanzalah
+    Copyright (c) 2021 hanzalah
+    
+    To edit this license information: Press Ctrl+Shift+P and press 'Create new License Template...'.
+)
+
+2020-2021 hanza
     
     To edit this license information: Press Ctrl+Shift+P and press 'Create new License Template...'.
 )
