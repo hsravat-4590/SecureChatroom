@@ -24,7 +24,6 @@
  *   */
  */
 
-*/
 
 package com.ravat.hanzalah.securechat.ui
 
